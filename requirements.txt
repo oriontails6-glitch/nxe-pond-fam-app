@@ -1,5 +1,4 @@
-streamlit==1.35.0
-supabase==2.33.0
-Pillow==10.4.0
-pytz==2025.2
-pytest==8.2.2
+streamlit>=1.35.0,<1.40.0
+supabase>=2.4.0
+Pillow>=10.2.0
+pytz>=2024.1
