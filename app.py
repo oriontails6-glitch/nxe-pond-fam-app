@@ -21,7 +21,11 @@ st.set_page_config(
 # Core imports
 import config
 from styles import get_css, get_floating_ghosts_html, get_storybook_header_svg
-from sponsor_config import SPONSOR_NAME, SPONSOR_TITLE, PAPA_MO_QUOTES
+from sponsor_config import (
+    SPONSOR_NAME, SPONSOR_TITLE, SPONSOR_SUBTITLE, SPONSOR_IMAGE, SPONSOR_IMAGE_FALLBACK,
+    ORGANIZERS_NAME, ORGANIZERS_TITLE, ORGANIZERS_SUBTITLE, ORGANIZERS_IMAGE, ORGANIZERS_IMAGE_FALLBACK,
+    TOURNAMENT_PRIZES, PAPA_MO_QUOTES, TWINNS_QUOTES
+)
 from phases import CompetitionPhase, evaluate_phase, format_utc_display
 from db import (
     get_settings,
@@ -223,19 +227,63 @@ def render_papamo_sponsor():
     idx = st.session_state.papamo_idx % len(PAPA_MO_QUOTES)
     quote = PAPA_MO_QUOTES[idx]
 
+    # Check image path
+    sponsor_img = SPONSOR_IMAGE if os.path.exists(SPONSOR_IMAGE) else (SPONSOR_IMAGE_FALLBACK if os.path.exists(SPONSOR_IMAGE_FALLBACK) else None)
+    img_html = f'<img src="{sponsor_img}" class="brand-banner-img" alt="Papa Mo Sponsor" />' if sponsor_img else '<div style="font-size: 2.3rem; margin: 0.15rem 0;">👑 🦆 👑</div>'
+
+    # Build prizes html
+    prizes_html = "".join([
+        f"""<div class="prize-item" style="border-left: 4px solid {p['color']};">
+            <span style="background: rgba(255,255,255,0.1); color: {p['color']}; font-family: 'Fredoka', sans-serif; font-size: 0.78rem; font-weight: 700; padding: 2px 10px; border-radius: 9999px;">{p['rank']}</span>
+            <div class="prize-title" style="color: {p['color']};">{p['title']}</div>
+            <p class="prize-desc">{p['desc']}</p>
+        </div>""" for p in TOURNAMENT_PRIZES
+    ])
+
     st.markdown(f"""<div class="papamo-sponsor-card">
-<div class="papamo-badge">⭐ Official Tournament Sponsor ⭐</div>
-<div style="font-size: 2.3rem; margin: 0.15rem 0;">👑 🦆 👑</div>
+<div class="papamo-badge">👑 OFFICIAL TOURNAMENT SPONSOR 👑</div>
+{img_html}
 <div class="papamo-title">PAPA MO'S ROYAL POND PATRONAGE</div>
-<div style="font-size: 0.85rem; color: #DDD6FE;">{SPONSOR_TITLE}</div>
+<div style="font-size: 0.9rem; color: #FDE68A; font-weight: 600; margin-bottom: 0.2rem;">{SPONSOR_TITLE}</div>
+<div style="font-size: 0.82rem; color: #DDD6FE; margin-bottom: 0.7rem;">{SPONSOR_SUBTITLE}</div>
 <div class="papamo-quote-box">
 "{quote}"
+</div>
+<div style="margin-top: 1.1rem; text-align: left;">
+<div style="font-family: 'Fredoka', sans-serif; font-size: 1.1rem; color: #FBBF24; margin-bottom: 0.6rem; text-align: center;">🏆 Official Tournament Prizes (Sponsored by Papa Mo)</div>
+{prizes_html}
 </div>
 </div>""", unsafe_allow_html=True)
     c1, c2, c3 = st.columns([1, 2, 1])
     with c2:
         if st.button("🎲 Papa Mo's Wisdom", key="papamo_refresh_btn"):
             st.session_state.papamo_idx = (idx + 1) % len(PAPA_MO_QUOTES)
+            st.rerun()
+
+
+def render_twinns_organizers():
+    if "twinns_idx" not in st.session_state:
+        st.session_state.twinns_idx = random.randint(0, len(TWINNS_QUOTES) - 1)
+    idx = st.session_state.twinns_idx % len(TWINNS_QUOTES)
+    quote = TWINNS_QUOTES[idx]
+
+    org_img = ORGANIZERS_IMAGE if os.path.exists(ORGANIZERS_IMAGE) else (ORGANIZERS_IMAGE_FALLBACK if os.path.exists(ORGANIZERS_IMAGE_FALLBACK) else None)
+    img_html = f'<img src="{org_img}" class="brand-banner-img" alt="The Ghost Twinns: Orion & Nobu" />' if org_img else '<div style="font-size: 2.3rem; margin: 0.15rem 0;">👻 👻 🪷</div>'
+
+    st.markdown(f"""<div class="organizers-card">
+<div class="organizers-badge">👻 TOURNAMENT ORGANIZERS 👻</div>
+{img_html}
+<div style="font-family: 'Fredoka', sans-serif; font-size: 1.35rem; font-weight: 700; color: #E9D5FF; margin: 0.2rem 0;">{ORGANIZERS_NAME}</div>
+<div style="font-size: 0.9rem; color: #DDD6FE; font-weight: 600; margin-bottom: 0.2rem;">{ORGANIZERS_TITLE}</div>
+<div style="font-size: 0.82rem; color: #C084FC; margin-bottom: 0.6rem;">{ORGANIZERS_SUBTITLE}</div>
+<div class="papamo-quote-box" style="border-left-color: #C084FC;">
+"{quote}"
+</div>
+</div>""", unsafe_allow_html=True)
+    c1, c2, c3 = st.columns([1, 2, 1])
+    with c2:
+        if st.button("🎲 Twinns Ghost Wisdom", key="twinns_refresh_btn"):
+            st.session_state.twinns_idx = (idx + 1) % len(TWINNS_QUOTES)
             st.rerun()
 
 
@@ -298,8 +346,11 @@ if not user_gid:
             st.session_state.user_gid = "guest"
             st.rerun()
 
-    # Papa Mo Official Sponsor Showcase
+    # Papa Mo Official Sponsor & Prizes Showcase
     render_papamo_sponsor()
+
+    # The Mischievous Ghost Organizers (The Twinns: Orion & Nobu)
+    render_twinns_organizers()
 
     # Spooky dad joke
     render_dad_joke_card()
@@ -361,8 +412,9 @@ else:
     else:
         render_quiz(user_gid, current_phase)
 
-    # 4. Papa Mo Sponsor & Spooky Dad Joke at bottom of view
+    # 4. Papa Mo Sponsor, Ghost Twinns & Spooky Dad Joke at bottom of view
     render_papamo_sponsor()
+    render_twinns_organizers()
     render_dad_joke_card()
 
 

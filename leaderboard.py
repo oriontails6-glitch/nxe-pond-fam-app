@@ -49,9 +49,12 @@ def render_leaderboard(current_phase: CompetitionPhase, voting_end_utc):
     st.markdown(f"""<div class="pond-card" style="border: 1px solid rgba(251, 191, 36, 0.45); background: linear-gradient(135deg, rgba(58, 28, 92, 0.85) 0%, rgba(28, 14, 48, 0.9) 100%); text-align: center; padding: 2rem 1.2rem; box-shadow: 0 14px 40px rgba(251, 191, 36, 0.25);">
 <div style="font-size: 3rem; margin-bottom: 0.2rem;">👑 🪷 👑</div>
 <div style="font-size: 0.9rem; font-weight: 800; color: #FBBF24; text-transform: uppercase; letter-spacing: 2px; font-family: 'Fredoka', sans-serif;">NXE Halloween Champion</div>
-<h1 style="color: #FFFDF5; margin: 0.4rem 0 0.8rem 0; font-size: 2.3rem; text-shadow: 0 2px 12px rgba(251, 191, 36, 0.4);">{escaped_name}</h1>
-<div style="display: inline-block; background: rgba(251, 191, 36, 0.18); border: 1px solid #FBBF24; border-radius: 9999px; padding: 6px 20px; font-weight: 700; color: #FDE68A; font-size: 1.1rem; margin-bottom: 1rem;">
+<h1 style="color: #FFFDF5; margin: 0.4rem 0 0.6rem 0; font-size: 2.3rem; text-shadow: 0 2px 12px rgba(251, 191, 36, 0.4);">{escaped_name}</h1>
+<div style="display: inline-block; background: rgba(251, 191, 36, 0.18); border: 1px solid #FBBF24; border-radius: 9999px; padding: 6px 20px; font-weight: 700; color: #FDE68A; font-size: 1.05rem; margin-bottom: 0.75rem;">
 🗳️ {winner["votes"]} Community Votes
+</div>
+<div style="display: block; background: rgba(124, 58, 237, 0.25); border: 1px solid rgba(196, 181, 253, 0.3); border-radius: 14px; padding: 8px 14px; color: #FDE047; font-weight: 700; font-size: 0.95rem; max-width: 380px; margin: 0 auto;">
+🎁 Grand Prize: 1 Month Card (Sponsored by Papa Mo!)
 </div>
 </div>""", unsafe_allow_html=True)
 
@@ -83,6 +86,12 @@ def render_leaderboard(current_phase: CompetitionPhase, voting_end_utc):
             with col2:
                 st.markdown(f"**In-Game Name:** `{name}`")
                 st.markdown(f"**Final Votes:** `{votes}`")
+                if rank == 1:
+                    st.markdown("🎁 **Prize:** `1 Month Card` *(Sponsored by Papa Mo!)*")
+                elif rank == 2:
+                    st.markdown("🎁 **Prize:** `Everyone Obeys You for 24 Hours!` 🫡")
+                elif rank == 3:
+                    st.markdown("🎁 **Prize:** `150M RSS Dinner at Orion's Pax!` 🍲🌾")
                 st.markdown(f"**Backstory:** {story}")
 
     st.markdown("---")

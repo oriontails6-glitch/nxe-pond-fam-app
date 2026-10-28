@@ -180,6 +180,80 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ==============================================
+   ORGANIZERS CARD (THE MISCHIEVOUS TWINNS: ORION & NOBU)
+   ============================================== */
+.organizers-card {
+    background: linear-gradient(135deg, rgba(38, 16, 68, 0.85) 0%, rgba(20, 9, 38, 0.9) 100%) !important;
+    border: 1px solid rgba(192, 132, 252, 0.35) !important;
+    border-radius: 22px !important;
+    padding: 1.15rem 1.35rem !important;
+    margin-bottom: 1.2rem !important;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(192, 132, 252, 0.2) !important;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.organizers-badge {
+    display: inline-block;
+    background: rgba(192, 132, 252, 0.18);
+    border: 1px solid #C084FC;
+    color: #E9D5FF;
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 700;
+    font-size: 0.78rem;
+    padding: 3px 12px;
+    border-radius: 9999px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 0.45rem;
+}
+
+.brand-banner-img {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    max-height: 280px;
+    object-fit: cover;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    margin: 0.65rem 0;
+    display: block;
+}
+
+/* ==============================================
+   TOURNAMENT PRIZES CARDS
+   ============================================== */
+.prize-item {
+    background: rgba(24, 11, 44, 0.85);
+    border-radius: 18px;
+    padding: 1.05rem 1.2rem;
+    margin-bottom: 0.85rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s ease;
+}
+
+.prize-item:hover {
+    transform: translateY(-2px);
+}
+
+.prize-title {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0.25rem 0 0.2rem 0;
+}
+
+.prize-desc {
+    font-size: 0.88rem;
+    color: #DDD6FE;
+    line-height: 1.45;
+    margin: 0;
+}
+
+/* ==============================================
    COZY FROSTED GLASS CARDS
    ============================================== */
 .pond-card {
