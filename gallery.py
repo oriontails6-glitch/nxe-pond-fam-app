@@ -24,11 +24,20 @@ from phases import CompetitionPhase
 
 
 def render_gallery(user_gid: str, current_phase: CompetitionPhase):
-    st.markdown("## 👻 Anonymous Spooky Costume Gallery 🎃")
+    st.markdown("## 👻 Anonymous Costume Gallery 🪷")
 
     # Phase 1: Gallery is sealed until Phase 2
     if current_phase == CompetitionPhase.SUBMISSIONS:
-        st.markdown('<div class="pond-card" style="text-align: center; padding: 2rem 1rem;"><div style="font-size: 3rem; margin-bottom: 0.5rem;">🔒 🎃 🔒</div><h3 style="color: var(--pumpkin);">The Gallery Vault is Sealed!</h3><p style="color: var(--text-secondary); max-width: 480px; margin: 0 auto 1.2rem auto;">All costume entries are locked deep inside the mist-shrouded pond vault to keep the surprise intact. The gallery unseals when Phase 2 begins!</p><div style="font-size: 1.1rem; color: var(--candy); font-weight: 700;">⏳ Submissions are open now. Make sure you submit your costume!</div></div>', unsafe_allow_html=True)
+        st.markdown("""<div class="pond-card" style="text-align: center; padding: 2.2rem 1.2rem;">
+<div style="font-size: 2.6rem; margin-bottom: 0.35rem;">🗝️ 🪷 🔒</div>
+<h3 style="color: #FDE047; font-family: 'Fredoka', sans-serif; font-size: 1.5rem; margin: 0.2rem 0 0.6rem 0;">The Misty Pond Vault is Sealed!</h3>
+<p style="color: #DDD6FE; font-size: 0.94rem; line-height: 1.55; max-width: 460px; margin: 0 auto 1.2rem auto;">
+All contestant costumes are safely resting under the moonlit lily pads to keep every disguise a grand surprise. The gallery unseals when deliberations begin!
+</p>
+<div style="display: inline-block; background: rgba(251, 191, 36, 0.15); border: 1px solid rgba(251, 191, 36, 0.35); border-radius: 9999px; padding: 6px 16px; font-size: 0.9rem; color: #FDE68A; font-weight: 700;">
+⏳ Submissions are open now • Make sure your costume is sealed!
+</div>
+</div>""", unsafe_allow_html=True)
 
         col_g1, col_g2 = st.columns(2)
         with col_g1:

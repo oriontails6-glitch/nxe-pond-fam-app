@@ -46,7 +46,14 @@ def render_leaderboard(current_phase: CompetitionPhase, voting_end_utc):
     escaped_name = html.escape(winner["ingame_name"])
     escaped_story = html.escape(winner["backstory"])
 
-    st.markdown(f'<div class="pond-card" style="border: 2px solid #FFD700; background: linear-gradient(180deg, #2D1438 0%, #160D24 100%); text-align: center; padding: 2rem 1rem;"><div style="font-size: 3rem; margin-bottom: 0.2rem;">👑 🎃 👑</div><div style="font-size: 0.95rem; font-weight: 800; color: #FFD700; text-transform: uppercase; letter-spacing: 1.5px;">NXE Halloween Champion</div><h1 style="color: var(--pumpkin); margin: 0.4rem 0 0.8rem 0; font-size: 2.3rem;">{escaped_name}</h1><div style="display: inline-block; background: rgba(255, 209, 102, 0.2); border: 2px solid #FFD166; border-radius: 9999px; padding: 8px 20px; font-weight: 700; color: #FFD166; font-size: 1.15rem; margin-bottom: 1rem;">🗳️ {winner["votes"]} Total Community Votes</div></div>', unsafe_allow_html=True)
+    st.markdown(f"""<div class="pond-card" style="border: 1px solid rgba(251, 191, 36, 0.45); background: linear-gradient(135deg, rgba(58, 28, 92, 0.85) 0%, rgba(28, 14, 48, 0.9) 100%); text-align: center; padding: 2rem 1.2rem; box-shadow: 0 14px 40px rgba(251, 191, 36, 0.25);">
+<div style="font-size: 3rem; margin-bottom: 0.2rem;">👑 🪷 👑</div>
+<div style="font-size: 0.9rem; font-weight: 800; color: #FBBF24; text-transform: uppercase; letter-spacing: 2px; font-family: 'Fredoka', sans-serif;">NXE Halloween Champion</div>
+<h1 style="color: #FFFDF5; margin: 0.4rem 0 0.8rem 0; font-size: 2.3rem; text-shadow: 0 2px 12px rgba(251, 191, 36, 0.4);">{escaped_name}</h1>
+<div style="display: inline-block; background: rgba(251, 191, 36, 0.18); border: 1px solid #FBBF24; border-radius: 9999px; padding: 6px 20px; font-weight: 700; color: #FDE68A; font-size: 1.1rem; margin-bottom: 1rem;">
+🗳️ {winner["votes"]} Community Votes
+</div>
+</div>""", unsafe_allow_html=True)
 
     if winner.get("image_path"):
         st.markdown(f"""<div class="gallery-img-container" style="max-height: 320px; height: 300px; margin: 0.5rem auto 1rem auto;">

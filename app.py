@@ -20,7 +20,8 @@ st.set_page_config(
 
 # Core imports
 import config
-from styles import get_css, get_floating_ghosts_html
+from styles import get_css, get_floating_ghosts_html, get_storybook_header_svg
+from sponsor_config import SPONSOR_NAME, SPONSOR_TITLE, PAPA_MO_QUOTES
 from phases import CompetitionPhase, evaluate_phase, format_utc_display
 from db import (
     get_settings,
@@ -152,23 +153,13 @@ if is_admin_route:
 
 
 # ==========================================
-# SPOOKY HALLOWEEN HERO HEADER
+# COZY STORYBOOK HERO HEADER (Pinterest Inspo 4 & 5)
 # ==========================================
-st.markdown("""<div class="vector-halloween-hero">
-<div class="hero-full-moon"></div>
-<div class="hero-title-box">
-<h1 class="hero-halloween-title">🎃 NXE POND FAM 🎃</h1>
-<div style="font-family: 'Fredoka', sans-serif; font-size: 1.15rem; font-weight: 700; color: #FFE082; text-shadow: 0 2px 4px rgba(0,0,0,0.5); margin: 0.35rem 0;">
-Spooky Halloween Avatar & Costume Championship
-</div>
-<div class="hero-sub-badge">👑 King Shot Alliance NXE</div>
-</div>
-</div>
-<div class="creature-strip">
-<div style="text-align: center;"><span style="font-size: 1.8rem;">🦆</span><div style="font-size: 0.75rem; font-weight: 700; color: #FFD000;">Witchy Duck</div></div>
-<div style="text-align: center;"><span style="font-size: 1.8rem;">🐉</span><div style="font-size: 0.75rem; font-weight: 700; color: #C77DFF;">Baby Dragon</div></div>
-<div style="text-align: center;"><span style="font-size: 1.8rem;">🐟</span><div style="font-size: 0.75rem; font-weight: 700; color: #FF9E00;">Pond Fish</div></div>
-<div style="text-align: center;"><span style="font-size: 1.8rem;">🎃</span><div style="font-size: 0.75rem; font-weight: 700; color: #FF7A00;">Jack-o'-Lantern</div></div>
+st.markdown(f"""<div class="storybook-hero-card">
+{get_storybook_header_svg()}
+<div class="storybook-title">NXE POND FAM</div>
+<div class="storybook-subtitle">Spooky Halloween Avatar & Costume Championship</div>
+<div class="storybook-badge">👑 King Shot Alliance NXE</div>
 </div>""", unsafe_allow_html=True)
 
 # Phase Banner with Live UTC Countdown
@@ -223,6 +214,28 @@ def render_dad_joke_card():
     with col_j2:
         if st.button("🎲 Tell Me Another Joke!", key="roll_dad_joke_btn"):
             st.session_state.joke_idx = (idx + 1) % len(DAD_JOKES)
+            st.rerun()
+
+
+def render_papamo_sponsor():
+    if "papamo_idx" not in st.session_state:
+        st.session_state.papamo_idx = random.randint(0, len(PAPA_MO_QUOTES) - 1)
+    idx = st.session_state.papamo_idx % len(PAPA_MO_QUOTES)
+    quote = PAPA_MO_QUOTES[idx]
+
+    st.markdown(f"""<div class="papamo-sponsor-card">
+<div class="papamo-badge">⭐ Official Tournament Sponsor ⭐</div>
+<div style="font-size: 2.3rem; margin: 0.15rem 0;">👑 🦆 👑</div>
+<div class="papamo-title">PAPA MO'S ROYAL POND PATRONAGE</div>
+<div style="font-size: 0.85rem; color: #DDD6FE;">{SPONSOR_TITLE}</div>
+<div class="papamo-quote-box">
+"{quote}"
+</div>
+</div>""", unsafe_allow_html=True)
+    c1, c2, c3 = st.columns([1, 2, 1])
+    with c2:
+        if st.button("🎲 Papa Mo's Wisdom", key="papamo_refresh_btn"):
+            st.session_state.papamo_idx = (idx + 1) % len(PAPA_MO_QUOTES)
             st.rerun()
 
 
@@ -285,6 +298,9 @@ if not user_gid:
             st.session_state.user_gid = "guest"
             st.rerun()
 
+    # Papa Mo Official Sponsor Showcase
+    render_papamo_sponsor()
+
     # Spooky dad joke
     render_dad_joke_card()
 
@@ -345,7 +361,8 @@ else:
     else:
         render_quiz(user_gid, current_phase)
 
-    # 4. Spooky Dad Joke at bottom of view
+    # 4. Papa Mo Sponsor & Spooky Dad Joke at bottom of view
+    render_papamo_sponsor()
     render_dad_joke_card()
 
 
