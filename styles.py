@@ -543,6 +543,38 @@ div[data-baseweb="tab-border"] {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
 }
 
+/* Login Portal Segmented Radio Pills */
+div[data-testid="stRadio"] > div[role="radiogroup"] {
+    display: flex !important;
+    gap: 6px !important;
+    background: rgba(18, 9, 32, 0.88) !important;
+    border: 1px solid rgba(167, 139, 250, 0.35) !important;
+    border-radius: 9999px !important;
+    padding: 5px !important;
+    margin-bottom: 1.1rem !important;
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.45) !important;
+    justify-content: space-around !important;
+}
+
+div[data-testid="stRadio"] label {
+    flex: 1 !important;
+    text-align: center !important;
+    justify-content: center !important;
+    padding: 9px 14px !important;
+    border-radius: 9999px !important;
+    font-family: 'Fredoka', sans-serif !important;
+    font-size: 0.94rem !important;
+    font-weight: 600 !important;
+    color: #DDD6FE !important;
+    cursor: pointer !important;
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+div[data-testid="stRadio"] label:hover {
+    color: #FFFFFF !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+}
+
 /* ==============================================
    MOBILE RESPONSIVENESS (< 600px)
    ============================================== */

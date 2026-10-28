@@ -166,8 +166,11 @@ if is_admin_route:
 # ==========================================
 # COZY STORYBOOK HERO HEADER (Pinterest Inspo 4 & 5)
 # ==========================================
+welcome_uri = get_image_base64_data_uri("images/welcome_web.webp") or get_image_base64_data_uri("images/welcome.png")
+banner_scene_html = f'<img src="{welcome_uri}" class="storybook-hero-scene" alt="NXE Pond Fam Spooky Halloween" />' if welcome_uri else get_storybook_header_svg()
+
 st.markdown(f"""<div class="storybook-hero-card">
-{get_storybook_header_svg()}
+{banner_scene_html}
 <div class="storybook-title">NXE POND FAM</div>
 <div class="storybook-subtitle">Spooky Halloween Avatar & Costume Championship</div>
 <div class="storybook-badge">👑 King Shot Alliance NXE</div>
@@ -178,11 +181,13 @@ banner_color = current_phase.badge_color
 phase_tag = f'<span class="phase-badge" style="background-color: {banner_color}; color: #070C18;">{current_phase.label}</span>'
 server_clock_str = phase_info.get("server_utc_str", "UTC")
 
-if phase_info["target_time"]:
+if current_phase == CompetitionPhase.RESULTS:
+    countdown_display = f'<div style="margin-top: 6px;"><div style="color: var(--text-secondary); font-size: 0.88rem;">🕒 Server Clock: <strong style="color: #FFFFFF;">{server_clock_str}</strong></div><div style="color: #34D399; font-weight: 700; margin-top: 4px;">🏆 Competition Concluded! Check the Champion Podium!</div></div>'
+elif phase_info.get("target_time"):
     target_str = format_utc_display(phase_info["target_time"])
     countdown_display = f'<div style="margin-top: 6px;"><div style="color: var(--text-secondary); font-size: 0.88rem;">🕒 Server Clock: <strong style="color: #FFFFFF;">{server_clock_str}</strong></div><div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-top: 4px;"><span style="color: var(--text-secondary); font-size: 0.9rem;">{phase_info["target_label"]}: <strong style="color: #FFFFFF;">{target_str}</strong></span><span style="font-family: \'Fredoka\', sans-serif; font-size: 1.15rem; color: #FBBF24; font-weight: 700;">⏳ {phase_info["countdown_str"]}</span></div></div>'
 else:
-    countdown_display = f'<div style="margin-top: 6px;"><div style="color: var(--text-secondary); font-size: 0.88rem;">🕒 Server Clock: <strong style="color: #FFFFFF;">{server_clock_str}</strong></div><div style="color: #34D399; font-weight: 700; margin-top: 4px;">🏆 Competition Concluded! Check the Champion Podium!</div></div>'
+    countdown_display = f'<div style="margin-top: 6px;"><div style="color: var(--text-secondary); font-size: 0.88rem;">🕒 Server Clock: <strong style="color: #FFFFFF;">{server_clock_str}</strong></div><div style="color: #FBBF24; font-weight: 700; margin-top: 4px;">🎃 {current_phase.label} Active!</div></div>'
 
 banner_html = f'<div class="phase-banner"><div>{phase_tag}</div>{countdown_display}</div>'
 st.markdown(banner_html, unsafe_allow_html=True)
@@ -229,17 +234,37 @@ def render_dad_joke_card():
 
 
 def render_home_showcase_carousel():
-    """Renders the consolidated 4-tab interactive carousel containing Prizes, Sponsor, Organizers, and Guidelines."""
+    """Renders the consolidated interactive carousel containing Prizes, Sponsor, Organizers, and Guidelines."""
+    if "home_carousel_tab" not in st.session_state:
+        st.session_state.home_carousel_tab = "rewards"
+
+    active_tab = st.session_state.home_carousel_tab
+
     st.markdown('<div style="text-align: center; margin: 1.4rem 0 0.6rem 0;"><span style="font-family: \'Fredoka\', sans-serif; font-size: 1.15rem; color: #FBBF24; font-weight: 700;">✨ Tournament Lore, Prizes & Benefactors ✨</span></div>', unsafe_allow_html=True)
 
-    t_prizes, t_sponsor, t_organizers, t_guide = st.tabs([
-        "🏆 Rewards",
-        "👑 Papa Mo (Sponsor)",
-        "👻 Ghost Twinns",
-        "📜 Guidelines"
-    ])
+    col_t1, col_t2, col_t3, col_t4 = st.columns(4)
+    with col_t1:
+        is_sel = (active_tab == "rewards")
+        if st.button("⭐ 🏆 Prizes" if is_sel else "🏆 Prizes", key="h_tab_rewards"):
+            st.session_state.home_carousel_tab = "rewards"
+            st.rerun()
+    with col_t2:
+        is_sel = (active_tab == "sponsor")
+        if st.button("⭐ 👑 Papa Mo" if is_sel else "👑 Papa Mo", key="h_tab_sponsor"):
+            st.session_state.home_carousel_tab = "sponsor"
+            st.rerun()
+    with col_t3:
+        is_sel = (active_tab == "twinns")
+        if st.button("⭐ 👻 Twinns" if is_sel else "👻 Twinns", key="h_tab_twinns"):
+            st.session_state.home_carousel_tab = "twinns"
+            st.rerun()
+    with col_t4:
+        is_sel = (active_tab == "guide")
+        if st.button("⭐ 📜 Rules" if is_sel else "📜 Rules", key="h_tab_guide"):
+            st.session_state.home_carousel_tab = "guide"
+            st.rerun()
 
-    with t_prizes:
+    if active_tab == "rewards":
         prizes_html = "".join([
             f"""<div class="prize-item" style="border-left: 4px solid {p['color']};">
                 <span style="background: rgba(255,255,255,0.1); color: {p['color']}; font-family: 'Fredoka', sans-serif; font-size: 0.78rem; font-weight: 700; padding: 2px 10px; border-radius: 9999px;">{p['rank']}</span>
@@ -253,7 +278,7 @@ def render_home_showcase_carousel():
 {prizes_html}
 </div>""", unsafe_allow_html=True)
 
-    with t_sponsor:
+    elif active_tab == "sponsor":
         if "papamo_idx" not in st.session_state:
             st.session_state.papamo_idx = random.randint(0, len(PAPA_MO_QUOTES) - 1)
         idx_p = st.session_state.papamo_idx % len(PAPA_MO_QUOTES)
@@ -274,11 +299,11 @@ def render_home_showcase_carousel():
 </div>""", unsafe_allow_html=True)
         c1, c2, c3 = st.columns([1, 2, 1])
         with c2:
-            if st.button("🎲 Papa Mo's Wisdom", key="papamo_carousel_refresh"):
+            if st.button("🎲 Roll Next Papa Mo Decree!", key="papamo_carousel_refresh"):
                 st.session_state.papamo_idx = (idx_p + 1) % len(PAPA_MO_QUOTES)
                 st.rerun()
 
-    with t_organizers:
+    elif active_tab == "twinns":
         if "twinns_idx" not in st.session_state:
             st.session_state.twinns_idx = random.randint(0, len(TWINNS_QUOTES) - 1)
         idx_t = st.session_state.twinns_idx % len(TWINNS_QUOTES)
@@ -299,20 +324,20 @@ def render_home_showcase_carousel():
 </div>""", unsafe_allow_html=True)
         c1, c2, c3 = st.columns([1, 2, 1])
         with c2:
-            if st.button("🎲 Twinns Ghost Wisdom", key="twinns_carousel_refresh"):
+            if st.button("🎲 Roll Twinns Ghost Lore!", key="twinns_carousel_refresh"):
                 st.session_state.twinns_idx = (idx_t + 1) % len(TWINNS_QUOTES)
                 st.rerun()
 
-    with t_guide:
+    else:
         st.markdown("""<div class="pond-card" style="text-align: left;">
 <div style="font-family: 'Fredoka', sans-serif; font-size: 1.25rem; color: #FBBF24; margin-bottom: 0.8rem; text-align: center;">📜 Tournament Guidelines & How to Win</div>
 <div style="margin-bottom: 0.85rem;">
     <strong style="color: #FDE047; font-size: 0.96rem;">1. 🧠 Step 1: Pass the 5-Question Lore Quiz</strong>
-    <p style="color: #DDD6FE; font-size: 0.88rem; margin: 3px 0 0 0; line-height: 1.45;">Score 4+ out of 5 to earn the 👑 Qualified Contestant status. (Scored below 4? You still compete in the fun Honorary Vibes tier!).</p>
+    <p style="color: #DDD6FE; font-size: 0.88rem; margin: 3px 0 0 0; line-height: 1.45;">Score at least <strong>3 out of 5 (3/5)</strong> to earn the 👑 Qualified Contestant status. (Scored below 3? You still compete in the fun Honorary Vibes tier with custom spooky badges!).</p>
 </div>
 <div style="margin-bottom: 0.85rem;">
     <strong style="color: #FDE047; font-size: 0.96rem;">2. 🎨 Step 2: Upload Avatar & Spooky Backstory</strong>
-    <p style="color: #DDD6FE; font-size: 0.88rem; margin: 3px 0 0 0; line-height: 1.45;">Upload your in-game Halloween avatar screenshot and write the story or joke behind your costume. Mobile-optimized for landscape & portrait screenshots.</p>
+    <p style="color: #DDD6FE; font-size: 0.88rem; margin: 3px 0 0 0; line-height: 1.45;">Upload your in-game Halloween avatar screenshot and write the story or joke behind your costume. Mobile-optimized for landscape & portrait screenshots with tap-to-reveal stories.</p>
 </div>
 <div style="margin-bottom: 0.85rem;">
     <strong style="color: #FDE047; font-size: 0.96rem;">3. 🗳️ Step 3: Vote for Your 3 Favorites</strong>
@@ -320,74 +345,97 @@ def render_home_showcase_carousel():
 </div>
 <div>
     <strong style="color: #FDE047; font-size: 0.96rem;">4. 🏆 Step 4: Claim Podium Glory & Riches</strong>
-    <p style="color: #DDD6FE; font-size: 0.88rem; margin: 3px 0 0 0; line-height: 1.45;">When voting concludes, the automated podium crowns the champions! 1st takes the Month Card, 2nd commands the alliance for 24h (except Papa Mo!), and 3rd feasts on 150M RSS at Orion's Pax.</p>
+    <p style="color: #DDD6FE; font-size: 0.88rem; margin: 3px 0 0 0; line-height: 1.45;">When voting concludes, the automated podium crowns the champions! 1st takes the Month Card, 2nd commands the alliance for 24h (except Papa Mo & the Twinns can refuse silly orders!), and 3rd feasts on 150M RSS at Orion's Pax (wipe your feet!).</p>
 </div>
 </div>""", unsafe_allow_html=True)
 
 
 def render_quick_officer_portal():
     """In-app Officer & Co-Admin Quick Portal for 1-tap Governor ID additions right on mobile."""
-    with st.expander("🛡️ Alliance Officer & Co-Admin Portal (Add IDs On Mobile)", expanded=bool(st.session_state.get("admin_logged_user"))):
-        admin_user = st.session_state.get("admin_logged_user")
+    st.subheader("🛡️ Alliance Officer & Co-Admin Portal")
+    admin_user = st.session_state.get("admin_logged_user")
 
-        if not admin_user:
-            st.caption("Are you an NXE alliance officer? Log in here to approve Governor IDs directly on your phone — no PC, terminal, or git required!")
-            with st.form("quick_officer_login_form"):
-                c_u, c_p = st.columns(2)
-                with c_u:
-                    u_in = st.text_input("Officer Username", placeholder="e.g. admin1")
-                with c_p:
-                    p_in = st.text_input("Officer Passkey", type="password")
-                adm_btn = st.form_submit_button("🔓 Unlock Officer Tools")
+    if not admin_user:
+        st.markdown("""<div class="pond-card" style="border-color: rgba(52, 211, 153, 0.4);">
+        <div style="font-family: 'Fredoka', sans-serif; font-size: 1.15rem; color: #34D399; margin-bottom: 0.3rem;">🔒 Officer Verification</div>
+        <p style="color: #DDD6FE; font-size: 0.88rem; margin-bottom: 0.8rem;">Enter your alliance officer username (e.g. <code>admin1</code>, <code>admin2</code>, etc.) and passkey to approve Governor IDs directly on your phone — no PC, git, or terminal needed!</p>
+        </div>""", unsafe_allow_html=True)
 
-                if adm_btn:
-                    from admin import verify_admin_credentials
-                    if verify_admin_credentials(u_in.strip(), p_in.strip()):
-                        st.session_state.admin_logged_user = u_in.strip()
-                        st.success(f"Welcome Officer {u_in.strip()}! Roster tools unlocked.")
-                        st.rerun()
-                    else:
-                        st.error("Invalid officer credentials.")
-        else:
-            c_top1, c_top2 = st.columns([3, 1])
-            with c_top1:
-                st.success(f"🛡️ Officer Active: **`{admin_user}`**")
-            with c_top2:
-                if st.button("🚪 Logout Officer", key="quick_adm_logout"):
-                    st.session_state.admin_logged_user = None
+        with st.form("quick_officer_login_form"):
+            c_u, c_p = st.columns(2)
+            with c_u:
+                u_in = st.text_input("Officer Username", placeholder="e.g. admin1")
+            with c_p:
+                p_in = st.text_input("Officer Passkey", type="password")
+            adm_btn = st.form_submit_button("🔓 Unlock Officer Tools")
+
+            if adm_btn:
+                from admin import verify_admin_credentials
+                if verify_admin_credentials(u_in.strip(), p_in.strip()):
+                    st.session_state.admin_logged_user = u_in.strip()
+                    st.success(f"Welcome Officer {u_in.strip()}! Roster tools unlocked.")
                     st.rerun()
+                else:
+                    st.error("Invalid officer credentials.")
+    else:
+        st.markdown(f"""<div class="officer-quick-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+            <span style="font-family: 'Fredoka', sans-serif; font-size: 1.1rem; color: #34D399;">🛡️ Active Officer: <strong>{admin_user}</strong></span>
+        </div>
+        </div>""", unsafe_allow_html=True)
 
-            st.markdown("#### ⚡ 1-Tap Add Governor ID")
-            st.caption("Quickly approve an alliance member so they can log in right now:")
-            c_gid, c_btn = st.columns([2, 1])
-            with c_gid:
-                new_gid = st.text_input("Governor ID (digits only)", placeholder="e.g. 296378532", key="quick_add_gid_input")
-            with c_btn:
-                st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
-                add_now = st.button("➕ Approve ID", key="quick_add_gid_btn")
+        col_l1, col_l2 = st.columns([3, 1])
+        with col_l2:
+            if st.button("🚪 Logout Officer", key="quick_adm_logout"):
+                st.session_state.admin_logged_user = None
+                st.rerun()
 
-            if add_now:
-                clean_id = (new_gid or "").strip()
-                if not clean_id.isdigit():
-                    st.error("Governor ID must be numeric digits only.")
+        st.markdown("---")
+        st.markdown("#### ⚡ 1-Tap Add Single Governor ID")
+        st.caption("Quickly approve an alliance member so they can log in immediately:")
+        c_gid, c_btn = st.columns([2, 1])
+        with c_gid:
+            new_gid = st.text_input("Governor ID (digits only)", placeholder="e.g. 296378532", key="quick_add_gid_input")
+        with c_btn:
+            st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
+            add_now = st.button("➕ Approve ID", key="quick_add_gid_btn")
+
+        if add_now:
+            clean_id = (new_gid or "").strip()
+            if not clean_id.isdigit():
+                st.error("Governor ID must be numeric digits only.")
+            else:
+                from db import add_roster_ids
+                added, dupes, inv = add_roster_ids([clean_id])
+                if added > 0:
+                    st.success(f"🎉 Governor ID `{clean_id}` is now approved! They can log in immediately.")
+                elif dupes > 0:
+                    st.info(f"ℹ️ Governor ID `{clean_id}` is ALREADY approved in the roster.")
+                else:
+                    st.warning("Could not add ID. Please check format.")
+
+        st.markdown("---")
+        with st.expander("📋 Batch Add Multiple Governor IDs"):
+            st.caption("Paste multiple IDs separated by spaces, commas, or newlines:")
+            batch_text = st.text_area("Batch Governor IDs", placeholder="296378532\n100001\n100002", key="batch_gid_area")
+            if st.button("➕ Batch Approve IDs", key="batch_gid_btn"):
+                if not batch_text.strip():
+                    st.warning("Please enter IDs.")
                 else:
                     from db import add_roster_ids
-                    added, dupes, inv = add_roster_ids([clean_id])
-                    if added > 0:
-                        st.success(f"🎉 Governor ID `{clean_id}` is now approved! They can log in immediately.")
-                    elif dupes > 0:
-                        st.info(f"ℹ️ Governor ID `{clean_id}` is ALREADY approved in the roster.")
-                    else:
-                        st.warning("Could not add ID. Please check format.")
+                    cleaned = batch_text.replace(",", " ").replace(";", " ")
+                    raw_ids = cleaned.split()
+                    added, dupes, inv = add_roster_ids(raw_ids)
+                    st.success(f"✅ Roster updated: Added **{added}**, skipped **{dupes}** duplicates, ignored **{inv}** invalid entries.")
 
-            st.markdown("---")
-            col_full1, col_full2 = st.columns(2)
-            with col_full1:
-                if st.button("🏛️ Open Full Council Admin Sanctum", key="open_full_sanctum_btn"):
-                    st.session_state.active_screen = "admin_sanctum"
-                    st.rerun()
-            with col_full2:
-                st.caption("Manage submissions, audit community votes, edit phase schedule, and export CSV.")
+        st.markdown("---")
+        col_full1, col_full2 = st.columns(2)
+        with col_full1:
+            if st.button("🏛️ Open Full Council Admin Sanctum", key="open_full_sanctum_btn"):
+                st.session_state.active_screen = "admin_sanctum"
+                st.rerun()
+        with col_full2:
+            st.caption("Manage all submissions, audit votes, edit schedule timers, and export CSV.")
 
 
 # ==========================================
@@ -397,60 +445,75 @@ user_gid = st.session_state.user_gid
 
 if not user_gid:
     # GUEST & LOGIN VIEW (NO CLUTTERED TABS)
-    st.subheader("🔑 Contestant Login")
-    st.caption("Enter your King Shot Governor ID and secret alliance join code to compete:")
+    portal_choice = st.radio(
+        "Sign-In Portal",
+        ["🧙 Contestant Sign-In", "🛡️ Alliance Officer / Co-Admin Portal"],
+        horizontal=True,
+        label_visibility="collapsed",
+        key="main_login_portal_selector"
+    )
 
-    with st.form("login_form"):
-        gov_in = st.text_input("Governor ID (digits only)", max_chars=20, placeholder="e.g. 296378532")
-        join_in = st.text_input("Alliance Secret Quack (Join Code)", type="password", placeholder="From alliance chat")
-        login_btn = st.form_submit_button("🎃 Enter the Haunted Pond!")
+    if portal_choice == "🧙 Contestant Sign-In":
+        st.subheader("🔑 Contestant Login")
+        st.caption("Enter your King Shot Governor ID and secret alliance join code to compete:")
 
-        if login_btn:
-            clean_gid = (gov_in or "").strip()
-            clean_join = (join_in or "").strip()
+        with st.form("login_form"):
+            gov_in = st.text_input("Governor ID (digits only)", max_chars=20, placeholder="e.g. 296378532")
+            join_in = st.text_input("Alliance Secret Quack (Join Code)", type="password", placeholder="From alliance chat (NXEHALLOWEEN2026)")
+            login_btn = st.form_submit_button("🎃 Enter the Haunted Pond!")
 
-            if not clean_gid.isdigit():
-                st.error("Please enter your numeric Governor ID (digits only).")
-            else:
-                allowed, cooldown_secs = check_login_rate_limit(clean_gid)
-                if not allowed:
-                    st.error(f"🦇 Too many wrong attempts! Try again in {cooldown_secs} seconds.")
+            if login_btn:
+                clean_gid = (gov_in or "").strip()
+                clean_join = (join_in or "").strip()
+
+                if not clean_gid.isdigit():
+                    st.error("Please enter your numeric Governor ID (digits only).")
                 else:
-                    expected_join = st.secrets.get("JOIN_CODE", "NXEHALLOWEEN2026").strip().lower()
-                    if clean_join.lower() != expected_join:
-                        record_login_attempt(clean_gid, False)
-                        st.error("That is not the secret quack! Ask an NXE officer in alliance chat.")
-                    elif not is_governor_in_roster(clean_gid):
-                        record_login_attempt(clean_gid, False)
-                        st.error("Governor ID not found in the alliance roster! Ask an officer to add you.")
+                    # Detect if user accidentally typed admin password here
+                    admin_users = st.secrets.get("ADMIN_USERS", {})
+                    if any(clean_join == str(p) for p in admin_users.values()):
+                        st.warning("💡 That looks like an Officer Passkey! Switch to the **'🛡️ Alliance Officer / Co-Admin Portal'** tab above to access officer tools.")
                     else:
-                        record_login_attempt(clean_gid, True)
-                        st.session_state.user_gid = clean_gid
-                        token = generate_session_token(clean_gid)
-                        st.query_params["session"] = token
-
-                        # Route to exact required step
-                        attempts = get_quiz_attempts(clean_gid)
-                        entry = get_entry_by_governor(clean_gid)
-                        if not attempts:
-                            st.session_state.active_screen = "quiz"
-                        elif not entry:
-                            st.session_state.active_screen = "submit"
+                        allowed, cooldown_secs = check_login_rate_limit(clean_gid)
+                        if not allowed:
+                            st.error(f"🦇 Too many wrong attempts! Try again in {cooldown_secs} seconds.")
                         else:
-                            st.session_state.active_screen = "gallery"
-                        st.balloons()
-                        st.rerun()
+                            expected_join = st.secrets.get("JOIN_CODE", "NXEHALLOWEEN2026").strip().lower()
+                            if clean_join.lower() != expected_join:
+                                record_login_attempt(clean_gid, False)
+                                st.error("That is not the secret quack! Ask an NXE officer in alliance chat.")
+                            elif not is_governor_in_roster(clean_gid):
+                                record_login_attempt(clean_gid, False)
+                                st.error(f"Governor ID `{clean_gid}` not found in the approved roster! Ask an officer to add you (or switch to Officer Portal if you are an officer).")
+                            else:
+                                record_login_attempt(clean_gid, True)
+                                st.session_state.user_gid = clean_gid
+                                token = generate_session_token(clean_gid)
+                                st.query_params["session"] = token
 
-    # Guest link if voting or results open
-    if current_phase in (CompetitionPhase.VOTING, CompetitionPhase.RESULTS):
-        st.markdown("")
-        if st.button("👀 Just browsing? View Costume Gallery as Guest ➡️", key="guest_gal_btn"):
-            st.session_state.active_screen = "gallery"
-            st.session_state.user_gid = "guest"
-            st.rerun()
+                                # Route to exact required step
+                                attempts = get_quiz_attempts(clean_gid)
+                                entry = get_entry_by_governor(clean_gid)
+                                if not attempts:
+                                    st.session_state.active_screen = "quiz"
+                                elif not entry:
+                                    st.session_state.active_screen = "submit"
+                                else:
+                                    st.session_state.active_screen = "gallery"
+                                st.balloons()
+                                st.rerun()
 
-    # Officer & Co-Admin Quick Portal (1-Tap Governor ID Add right on mobile)
-    render_quick_officer_portal()
+        # Guest link if voting or results open
+        if current_phase in (CompetitionPhase.VOTING, CompetitionPhase.RESULTS):
+            st.markdown("")
+            if st.button("👀 Just browsing? View Costume Gallery as Guest ➡️", key="guest_gal_btn"):
+                st.session_state.active_screen = "gallery"
+                st.session_state.user_gid = "guest"
+                st.rerun()
+
+    else:
+        # Officer / Co-Admin Portal
+        render_quick_officer_portal()
 
     # Unified Home Carousel: Prizes, Papa Mo, Ghost Twinns, Guidelines
     render_home_showcase_carousel()

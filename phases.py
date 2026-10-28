@@ -95,17 +95,36 @@ def evaluate_phase(settings: dict, test_mode: bool = False, current_time_utc: da
         }
         if override_val in override_map:
             forced_phase = override_map[override_val]
+            sub_d = parse_iso_utc(settings.get("submission_deadline_utc", "2026-10-29T14:00:00Z"))
+            vot_s = parse_iso_utc(settings.get("voting_start_utc", "2026-10-30T14:00:00Z"))
+            vot_e = parse_iso_utc(settings.get("voting_end_utc", "2026-10-31T14:00:00Z"))
+
+            if forced_phase == CompetitionPhase.SUBMISSIONS:
+                t_time = sub_d
+                t_lbl = "Submissions Close (Preview)"
+            elif forced_phase == CompetitionPhase.JUDGING:
+                t_time = vot_s
+                t_lbl = "Voting Opens (Preview)"
+            elif forced_phase == CompetitionPhase.VOTING:
+                t_time = vot_e
+                t_lbl = "Voting Closes (Preview)"
+            else:
+                t_time = None
+                t_lbl = "Competition Concluded (Preview)"
+
+            rem = (t_time - current_time_utc) if (t_time and t_time > current_time_utc) else None
+
             return forced_phase, {
                 "phase": forced_phase,
                 "current_time_utc": current_time_utc,
                 "server_utc_str": current_time_utc.strftime("%d %b %Y, %H:%M UTC"),
-                "target_time": None,
-                "target_label": "TEST_MODE Phase Override Active",
-                "countdown_str": "TEST MODE",
+                "target_time": t_time,
+                "target_label": t_lbl,
+                "countdown_str": format_countdown(rem) if rem else "PREVIEW ACTIVE",
                 "is_override": True,
-                "submission_deadline": parse_iso_utc(settings.get("submission_deadline_utc")),
-                "voting_start": parse_iso_utc(settings.get("voting_start_utc")),
-                "voting_end": parse_iso_utc(settings.get("voting_end_utc")),
+                "submission_deadline": sub_d,
+                "voting_start": vot_s,
+                "voting_end": vot_e,
             }
 
     sub_deadline = parse_iso_utc(settings.get("submission_deadline_utc", "2026-10-29T14:00:00Z"))

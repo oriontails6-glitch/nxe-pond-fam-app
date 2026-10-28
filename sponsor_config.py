@@ -41,44 +41,47 @@ ORGANIZERS_IMAGE_FALLBACK = "images/organizers.png"
 # Official Tournament Prizes Sponsored by Papa Mo
 TOURNAMENT_PRIZES = [
     {
-        "rank": "🥇 1st Place Champion",
-        "title": "1 Month Card",
-        "desc": "Funded directly from Papa Mo's royal vault of riches! The ultimate trophy for the crowned king/queen of Halloween.",
-        "badge": "👑 Champion's Crown",
+        "rank": "🥇 1st Place Champion (THE TOURNAMENT HIGHLIGHT)",
+        "title": "💎 1 Month Card (Grand High Benefactor Trophy)",
+        "desc": "The supreme crown jewel of the Halloween Championship! Funded directly from Papa Mo's royal platinum vault of infinite riches. A full month of royal King Shot glory and endless power for the crowned spooky monarch of the pond!",
+        "badge": "👑 Grand Benefactor Crown",
         "color": "#FBBF24"
     },
     {
-        "rank": "🥈 2nd Place Victor",
-        "title": "Everyone Obeys You for 24 Hours (EXCEPT Papa Mo!)",
-        "desc": "Absolute alliance obedience! For 24 full hours, every alliance member in NXE must follow your every command, quack, or decree — EXCEPT the sponsor Papa Mo, who is strictly exempt & commands from his golden lily pad!",
-        "badge": "🫡 Total Alliance Command (Papa Mo Exempt)",
+        "rank": "🥈 2nd Place Victor (Mischief Edition)",
+        "title": "🫡 Everyone Obeys You for 24 Hours... With A Catch!",
+        "desc": "Absolute alliance obedience! For 24 full hours, every duck, fish, and governor in NXE must follow your every quack, decree, or ridiculous command! HOWEVER: 1) Sponsor Papa Mo is 100% EXEMPT (nobody bosses the checkbook!). 2) The mischievous Ghost Twinns (Orion & Nobu) officially reserve the ghostly right to flat-out REFUSE any command they deem boring, unspooky, or lacking snacks!",
+        "badge": "👻 Obedience with Ghostly Rebellion",
         "color": "#E2E8F0"
     },
     {
-        "rank": "🥉 3rd Place Hero",
-        "title": "150M RSS Dinner at Orion's Pax",
-        "desc": "A legendary banquet of 150,000,000 resources served fresh at Orion's stronghold! Dig in and feast like pond royalty.",
-        "badge": "🍲 150M RSS Feast",
+        "rank": "🥉 3rd Place Hero (Feast of Honor)",
+        "title": "🍲 150M RSS Dinner at Orion's Pax (PLEASE BE GENTLE!)",
+        "desc": "A staggering 150,000,000 resource banquet served fresh at Orion's Pax! Orion's personal royal plea: 'Pax is my absolute favorite child in all the kingdoms! Feast with pride, but please wipe your webbed duck feet and BE GENTLE with Pax's furniture!'",
+        "badge": "🌾 150M RSS Feast (Wipe Your Feet!)",
         "color": "#FB923C"
     }
 ]
 
 # Fun lore quotes from Papa Mo and the Ghost Twinns
 PAPA_MO_QUOTES = [
-    "Papa Mo's Alliance Decree: 'Every duck shall wear a witch hat, and all candy corn must be shared!' 🦆🎃",
-    "Papa Mo personally funded the 1-Month Card: 'Only the finest loot for our NXE pond champions!' 💎",
-    "Official Guarantee from Papa Mo: 100% Certified Spooky, 0% Organic Swamp Slime!",
-    "Funded entirely by Papa Mo's secret vault of pumpkin-spice dragon treats! 🐉🥐",
-    "Papa Mo's Royal Clarification: 'Whoever wins 2nd place commands the entire alliance, but nobody orders Papa Mo around!' 👑🫡",
-    "Rumor has it Papa Mo unionized the pond frogs to protect the 150M RSS dinner delivery! 🐸🍲",
-    "Alliance Rule #1 according to Papa Mo: The Ghost Twinns are allowed to cause chaos, as long as everyone has fun! 👻",
-    "Papa Mo paid the mist-goblins triple overtime to ensure buttery-smooth mobile loading! 📱💨"
+    "Papa Mo on Funding the 1-Month Card: 'I checked my gold pouch and accidentally dropped a Month Card. Whoever wins it better flex in alliance chat 24/7!' 💳👑",
+    "Papa Mo's Alliance Decree: 'Every duck shall wear a witch hat, and all candy corn must be shared... except mine. Mine is in a vault.' 🦆🎃💎",
+    "Papa Mo's Royal Clarification: 'Whoever wins 2nd place commands the entire alliance, but if anyone orders me to do pond pushups, I will revoke everyone's lily pad heating privileges!' 🫡❄️",
+    "Official Guarantee from Papa Mo: 100% Certified Spooky, 0% Organic Swamp Slime, and 200% funded by my sheer golden wealth! 💰🐸",
+    "Papa Mo: 'The Ghost Twinns asked for a budget increase for fake spiderwebs. I bought real spiders. You are welcome, NXE.' 🕷️🤣",
+    "Papa Mo's Economic Warning: 'The 150M RSS banquet at Orion's Pax is fully insured, but if anyone spills pumpkin soup on Orion's silk carpets, the bill goes to your farm account!' 🍲🧾",
+    "Papa Mo: 'I paid the mist-goblins triple overtime in pumpkin scones to ensure zero mobile lag. If your phone buffers, blame Nobu!' 📱💨",
+    "Papa Mo's Supreme Order: 'Win the 1-Month Card or spend the rest of autumn paddling against the pond current!' 🦆💨"
 ]
 
 TWINNS_QUOTES = [
-    "Orion & Nobu: 'We may be ghosts now, but our mischief is alive and thriving under Papa Mo's golden patronage!' 👻✨",
-    "The Twinns Decree: '150M RSS is waiting at Orion's Pax. Come hungry, leave wealthy!' 🍲🌾",
-    "Orion: 'Nobu, did you hide the extra candy corn?' Nobu: 'What candy corn? *burp*' 🦆🎃",
-    "The Mischievous Twinns: 'May the spookiest avatar win, and remember: runner-up bosses everyone around, except Papa Mo!' 🫡",
-    "The Twinns: 'We haunt the pond with love, chaos, and Papa Mo's endless supply of shiny prizes!' 👑"
+    "Orion: 'Nobu, did you save the candy corn like Papa Mo asked?' Nobu: 'What candy corn? *burrrrp*' Orion: 'Nobu you ate 40 pounds of sugar in 6 seconds.' 🦆🎃🍭",
+    "Orion: 'Regarding the 3rd place 150M RSS banquet: BE GENTLE! Pax is my absolute favorite, my pride, my joy! Eat the corn, but don't kick the furniture!' 🍲🥺",
+    "Nobu: 'If the 2nd place victor orders us to stop haunting the pond reeds, we officially invoke Article 4 of the Ghost Twinns Charter: NOPE!' 👻📜",
+    "The Ghost Twinns: 'We may be ghosts among the triplets, but our mischief has a 100% success rate and Papa Mo pays the repair bills!' ✨👻👑",
+    "Nobu: 'Orion, is 150M RSS enough for a dinner party?' Orion: 'Nobu, 150M can feed three kingdoms and six dragons!' Nobu: 'Cool, I will take a pre-dinner snack then.' 🐉🥐",
+    "Orion: 'Nobu, why is there ectoplasm on the 1-Month Card trophy?' Nobu: 'It was a ghost kiss of good luck! It wipes off... mostly.' 💎👻",
+    "Nobu's Decree: 'Any order given to us during the 24-hour 2nd place rule must be submitted in triplicate, signed in pumpkin juice, and accompanied by glazed donuts.' 🍩🎃",
+    "The Twinns: 'May the spookiest avatar win the Month Card! And remember: Pax has feelings, treat the RSS dinner with tender love and care!' 🏰🍲"
 ]
