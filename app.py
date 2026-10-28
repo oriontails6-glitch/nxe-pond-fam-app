@@ -24,7 +24,7 @@ from styles import get_css, get_floating_ghosts_html, get_storybook_header_svg
 from sponsor_config import (
     SPONSOR_NAME, SPONSOR_TITLE, SPONSOR_SUBTITLE, SPONSOR_IMAGE, SPONSOR_IMAGE_FALLBACK,
     ORGANIZERS_NAME, ORGANIZERS_TITLE, ORGANIZERS_SUBTITLE, ORGANIZERS_IMAGE, ORGANIZERS_IMAGE_FALLBACK,
-    TOURNAMENT_PRIZES, PAPA_MO_QUOTES, TWINNS_QUOTES
+    TOURNAMENT_PRIZES, PAPA_MO_QUOTES, TWINNS_QUOTES, get_image_base64_data_uri
 )
 from phases import CompetitionPhase, evaluate_phase, format_utc_display
 from db import (
@@ -108,8 +108,8 @@ if token_in_url and not st.session_state.user_gid:
     if verified_gid and is_governor_in_roster(verified_gid):
         st.session_state.user_gid = verified_gid
 
-# Check if admin route requested
-is_admin_route = (q_params.get("page") == "admin")
+# Check if admin route requested or active screen is admin_sanctum
+is_admin_route = (q_params.get("page") == "admin") or (st.session_state.active_screen == "admin_sanctum")
 
 # 4. Phase Evaluation
 settings = get_settings()
@@ -152,6 +152,13 @@ if test_mode:
 # ADMIN ROUTE (HIDDEN FROM CONTESTANTS)
 # ==========================================
 if is_admin_route:
+    col_ab1, col_ab2 = st.columns([3, 1])
+    with col_ab2:
+        if st.button("⬅️ Return to App", key="admin_back_btn"):
+            if "page" in st.query_params:
+                del st.query_params["page"]
+            st.session_state.active_screen = "login" if not st.session_state.user_gid else "quiz"
+            st.rerun()
     render_admin(test_mode=test_mode)
     st.stop()
 
@@ -221,70 +228,166 @@ def render_dad_joke_card():
             st.rerun()
 
 
-def render_papamo_sponsor():
-    if "papamo_idx" not in st.session_state:
-        st.session_state.papamo_idx = random.randint(0, len(PAPA_MO_QUOTES) - 1)
-    idx = st.session_state.papamo_idx % len(PAPA_MO_QUOTES)
-    quote = PAPA_MO_QUOTES[idx]
+def render_home_showcase_carousel():
+    """Renders the consolidated 4-tab interactive carousel containing Prizes, Sponsor, Organizers, and Guidelines."""
+    st.markdown('<div style="text-align: center; margin: 1.4rem 0 0.6rem 0;"><span style="font-family: \'Fredoka\', sans-serif; font-size: 1.15rem; color: #FBBF24; font-weight: 700;">✨ Tournament Lore, Prizes & Benefactors ✨</span></div>', unsafe_allow_html=True)
 
-    # Check image path
-    sponsor_img = SPONSOR_IMAGE if os.path.exists(SPONSOR_IMAGE) else (SPONSOR_IMAGE_FALLBACK if os.path.exists(SPONSOR_IMAGE_FALLBACK) else None)
-    img_html = f'<img src="{sponsor_img}" class="brand-banner-img" alt="Papa Mo Sponsor" />' if sponsor_img else '<div style="font-size: 2.3rem; margin: 0.15rem 0;">👑 🦆 👑</div>'
-
-    # Build prizes html
-    prizes_html = "".join([
-        f"""<div class="prize-item" style="border-left: 4px solid {p['color']};">
-            <span style="background: rgba(255,255,255,0.1); color: {p['color']}; font-family: 'Fredoka', sans-serif; font-size: 0.78rem; font-weight: 700; padding: 2px 10px; border-radius: 9999px;">{p['rank']}</span>
-            <div class="prize-title" style="color: {p['color']};">{p['title']}</div>
-            <p class="prize-desc">{p['desc']}</p>
-        </div>""" for p in TOURNAMENT_PRIZES
+    t_prizes, t_sponsor, t_organizers, t_guide = st.tabs([
+        "🏆 Rewards",
+        "👑 Papa Mo (Sponsor)",
+        "👻 Ghost Twinns",
+        "📜 Guidelines"
     ])
 
-    st.markdown(f"""<div class="papamo-sponsor-card">
+    with t_prizes:
+        prizes_html = "".join([
+            f"""<div class="prize-item" style="border-left: 4px solid {p['color']};">
+                <span style="background: rgba(255,255,255,0.1); color: {p['color']}; font-family: 'Fredoka', sans-serif; font-size: 0.78rem; font-weight: 700; padding: 2px 10px; border-radius: 9999px;">{p['rank']}</span>
+                <div class="prize-title" style="color: {p['color']};">{p['title']}</div>
+                <p class="prize-desc">{p['desc']}</p>
+            </div>""" for p in TOURNAMENT_PRIZES
+        ])
+        st.markdown(f"""<div class="pond-card" style="padding-bottom: 0.5rem;">
+<div style="font-family: 'Fredoka', sans-serif; font-size: 1.25rem; color: #FBBF24; margin-bottom: 0.6rem; text-align: center;">🏆 Official Tournament Rewards</div>
+<div style="text-align: center; color: #DDD6FE; font-size: 0.88rem; margin-bottom: 1rem;">Funded directly from the royal treasury of <strong>Papa Mo</strong>!</div>
+{prizes_html}
+</div>""", unsafe_allow_html=True)
+
+    with t_sponsor:
+        if "papamo_idx" not in st.session_state:
+            st.session_state.papamo_idx = random.randint(0, len(PAPA_MO_QUOTES) - 1)
+        idx_p = st.session_state.papamo_idx % len(PAPA_MO_QUOTES)
+        p_quote = PAPA_MO_QUOTES[idx_p]
+
+        sponsor_uri = get_image_base64_data_uri(SPONSOR_IMAGE) or get_image_base64_data_uri(SPONSOR_IMAGE_FALLBACK)
+        img_sponsor_html = f'<img src="{sponsor_uri}" class="brand-banner-img" alt="Papa Mo Sponsor" />' if sponsor_uri else '<div style="font-size: 2.3rem; margin: 0.15rem 0;">👑 🦆 👑</div>'
+
+        st.markdown(f"""<div class="papamo-sponsor-card">
 <div class="papamo-badge">👑 OFFICIAL TOURNAMENT SPONSOR 👑</div>
-{img_html}
+{img_sponsor_html}
 <div class="papamo-title">PAPA MO'S ROYAL POND PATRONAGE</div>
 <div style="font-size: 0.9rem; color: #FDE68A; font-weight: 600; margin-bottom: 0.2rem;">{SPONSOR_TITLE}</div>
 <div style="font-size: 0.82rem; color: #DDD6FE; margin-bottom: 0.7rem;">{SPONSOR_SUBTITLE}</div>
 <div class="papamo-quote-box">
-"{quote}"
-</div>
-<div style="margin-top: 1.1rem; text-align: left;">
-<div style="font-family: 'Fredoka', sans-serif; font-size: 1.1rem; color: #FBBF24; margin-bottom: 0.6rem; text-align: center;">🏆 Official Tournament Prizes (Sponsored by Papa Mo)</div>
-{prizes_html}
+"{p_quote}"
 </div>
 </div>""", unsafe_allow_html=True)
-    c1, c2, c3 = st.columns([1, 2, 1])
-    with c2:
-        if st.button("🎲 Papa Mo's Wisdom", key="papamo_refresh_btn"):
-            st.session_state.papamo_idx = (idx + 1) % len(PAPA_MO_QUOTES)
-            st.rerun()
+        c1, c2, c3 = st.columns([1, 2, 1])
+        with c2:
+            if st.button("🎲 Papa Mo's Wisdom", key="papamo_carousel_refresh"):
+                st.session_state.papamo_idx = (idx_p + 1) % len(PAPA_MO_QUOTES)
+                st.rerun()
 
+    with t_organizers:
+        if "twinns_idx" not in st.session_state:
+            st.session_state.twinns_idx = random.randint(0, len(TWINNS_QUOTES) - 1)
+        idx_t = st.session_state.twinns_idx % len(TWINNS_QUOTES)
+        t_quote = TWINNS_QUOTES[idx_t]
 
-def render_twinns_organizers():
-    if "twinns_idx" not in st.session_state:
-        st.session_state.twinns_idx = random.randint(0, len(TWINNS_QUOTES) - 1)
-    idx = st.session_state.twinns_idx % len(TWINNS_QUOTES)
-    quote = TWINNS_QUOTES[idx]
+        org_uri = get_image_base64_data_uri(ORGANIZERS_IMAGE) or get_image_base64_data_uri(ORGANIZERS_IMAGE_FALLBACK)
+        img_org_html = f'<img src="{org_uri}" class="brand-banner-img" alt="The Ghost Twinns: Orion & Nobu" />' if org_uri else '<div style="font-size: 2.3rem; margin: 0.15rem 0;">👻 👻 🪷</div>'
 
-    org_img = ORGANIZERS_IMAGE if os.path.exists(ORGANIZERS_IMAGE) else (ORGANIZERS_IMAGE_FALLBACK if os.path.exists(ORGANIZERS_IMAGE_FALLBACK) else None)
-    img_html = f'<img src="{org_img}" class="brand-banner-img" alt="The Ghost Twinns: Orion & Nobu" />' if org_img else '<div style="font-size: 2.3rem; margin: 0.15rem 0;">👻 👻 🪷</div>'
-
-    st.markdown(f"""<div class="organizers-card">
+        st.markdown(f"""<div class="organizers-card">
 <div class="organizers-badge">👻 TOURNAMENT ORGANIZERS 👻</div>
-{img_html}
+{img_org_html}
 <div style="font-family: 'Fredoka', sans-serif; font-size: 1.35rem; font-weight: 700; color: #E9D5FF; margin: 0.2rem 0;">{ORGANIZERS_NAME}</div>
 <div style="font-size: 0.9rem; color: #DDD6FE; font-weight: 600; margin-bottom: 0.2rem;">{ORGANIZERS_TITLE}</div>
 <div style="font-size: 0.82rem; color: #C084FC; margin-bottom: 0.6rem;">{ORGANIZERS_SUBTITLE}</div>
 <div class="papamo-quote-box" style="border-left-color: #C084FC;">
-"{quote}"
+"{t_quote}"
 </div>
 </div>""", unsafe_allow_html=True)
-    c1, c2, c3 = st.columns([1, 2, 1])
-    with c2:
-        if st.button("🎲 Twinns Ghost Wisdom", key="twinns_refresh_btn"):
-            st.session_state.twinns_idx = (idx + 1) % len(TWINNS_QUOTES)
-            st.rerun()
+        c1, c2, c3 = st.columns([1, 2, 1])
+        with c2:
+            if st.button("🎲 Twinns Ghost Wisdom", key="twinns_carousel_refresh"):
+                st.session_state.twinns_idx = (idx_t + 1) % len(TWINNS_QUOTES)
+                st.rerun()
+
+    with t_guide:
+        st.markdown("""<div class="pond-card" style="text-align: left;">
+<div style="font-family: 'Fredoka', sans-serif; font-size: 1.25rem; color: #FBBF24; margin-bottom: 0.8rem; text-align: center;">📜 Tournament Guidelines & How to Win</div>
+<div style="margin-bottom: 0.85rem;">
+    <strong style="color: #FDE047; font-size: 0.96rem;">1. 🧠 Step 1: Pass the 5-Question Lore Quiz</strong>
+    <p style="color: #DDD6FE; font-size: 0.88rem; margin: 3px 0 0 0; line-height: 1.45;">Score 4+ out of 5 to earn the 👑 Qualified Contestant status. (Scored below 4? You still compete in the fun Honorary Vibes tier!).</p>
+</div>
+<div style="margin-bottom: 0.85rem;">
+    <strong style="color: #FDE047; font-size: 0.96rem;">2. 🎨 Step 2: Upload Avatar & Spooky Backstory</strong>
+    <p style="color: #DDD6FE; font-size: 0.88rem; margin: 3px 0 0 0; line-height: 1.45;">Upload your in-game Halloween avatar screenshot and write the story or joke behind your costume. Mobile-optimized for landscape & portrait screenshots.</p>
+</div>
+<div style="margin-bottom: 0.85rem;">
+    <strong style="color: #FDE047; font-size: 0.96rem;">3. 🗳️ Step 3: Vote for Your 3 Favorites</strong>
+    <p style="color: #DDD6FE; font-size: 0.88rem; margin: 3px 0 0 0; line-height: 1.45;">During the live voting round, every verified governor gets exactly 3 votes. Tap any costume card in the gallery to expand its story and cast your votes!</p>
+</div>
+<div>
+    <strong style="color: #FDE047; font-size: 0.96rem;">4. 🏆 Step 4: Claim Podium Glory & Riches</strong>
+    <p style="color: #DDD6FE; font-size: 0.88rem; margin: 3px 0 0 0; line-height: 1.45;">When voting concludes, the automated podium crowns the champions! 1st takes the Month Card, 2nd commands the alliance for 24h (except Papa Mo!), and 3rd feasts on 150M RSS at Orion's Pax.</p>
+</div>
+</div>""", unsafe_allow_html=True)
+
+
+def render_quick_officer_portal():
+    """In-app Officer & Co-Admin Quick Portal for 1-tap Governor ID additions right on mobile."""
+    with st.expander("🛡️ Alliance Officer & Co-Admin Portal (Add IDs On Mobile)", expanded=bool(st.session_state.get("admin_logged_user"))):
+        admin_user = st.session_state.get("admin_logged_user")
+
+        if not admin_user:
+            st.caption("Are you an NXE alliance officer? Log in here to approve Governor IDs directly on your phone — no PC, terminal, or git required!")
+            with st.form("quick_officer_login_form"):
+                c_u, c_p = st.columns(2)
+                with c_u:
+                    u_in = st.text_input("Officer Username", placeholder="e.g. admin1")
+                with c_p:
+                    p_in = st.text_input("Officer Passkey", type="password")
+                adm_btn = st.form_submit_button("🔓 Unlock Officer Tools")
+
+                if adm_btn:
+                    from admin import verify_admin_credentials
+                    if verify_admin_credentials(u_in.strip(), p_in.strip()):
+                        st.session_state.admin_logged_user = u_in.strip()
+                        st.success(f"Welcome Officer {u_in.strip()}! Roster tools unlocked.")
+                        st.rerun()
+                    else:
+                        st.error("Invalid officer credentials.")
+        else:
+            c_top1, c_top2 = st.columns([3, 1])
+            with c_top1:
+                st.success(f"🛡️ Officer Active: **`{admin_user}`**")
+            with c_top2:
+                if st.button("🚪 Logout Officer", key="quick_adm_logout"):
+                    st.session_state.admin_logged_user = None
+                    st.rerun()
+
+            st.markdown("#### ⚡ 1-Tap Add Governor ID")
+            st.caption("Quickly approve an alliance member so they can log in right now:")
+            c_gid, c_btn = st.columns([2, 1])
+            with c_gid:
+                new_gid = st.text_input("Governor ID (digits only)", placeholder="e.g. 296378532", key="quick_add_gid_input")
+            with c_btn:
+                st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
+                add_now = st.button("➕ Approve ID", key="quick_add_gid_btn")
+
+            if add_now:
+                clean_id = (new_gid or "").strip()
+                if not clean_id.isdigit():
+                    st.error("Governor ID must be numeric digits only.")
+                else:
+                    from db import add_roster_ids
+                    added, dupes, inv = add_roster_ids([clean_id])
+                    if added > 0:
+                        st.success(f"🎉 Governor ID `{clean_id}` is now approved! They can log in immediately.")
+                    elif dupes > 0:
+                        st.info(f"ℹ️ Governor ID `{clean_id}` is ALREADY approved in the roster.")
+                    else:
+                        st.warning("Could not add ID. Please check format.")
+
+            st.markdown("---")
+            col_full1, col_full2 = st.columns(2)
+            with col_full1:
+                if st.button("🏛️ Open Full Council Admin Sanctum", key="open_full_sanctum_btn"):
+                    st.session_state.active_screen = "admin_sanctum"
+                    st.rerun()
+            with col_full2:
+                st.caption("Manage submissions, audit community votes, edit phase schedule, and export CSV.")
 
 
 # ==========================================
@@ -346,11 +449,11 @@ if not user_gid:
             st.session_state.user_gid = "guest"
             st.rerun()
 
-    # Papa Mo Official Sponsor & Prizes Showcase
-    render_papamo_sponsor()
+    # Officer & Co-Admin Quick Portal (1-Tap Governor ID Add right on mobile)
+    render_quick_officer_portal()
 
-    # The Mischievous Ghost Organizers (The Twinns: Orion & Nobu)
-    render_twinns_organizers()
+    # Unified Home Carousel: Prizes, Papa Mo, Ghost Twinns, Guidelines
+    render_home_showcase_carousel()
 
     # Spooky dad joke
     render_dad_joke_card()
@@ -369,8 +472,8 @@ else:
                 del st.query_params["session"]
             st.rerun()
 
-    # 2. Clean 4-Step Minimal Navigation Stepper
-    if st.session_state.active_screen in ("home", "login"):
+    # 2. Clean 5-Step Minimal Navigation Stepper
+    if st.session_state.active_screen in ("login",):
         attempts = get_quiz_attempts(user_gid)
         entry = get_entry_by_governor(user_gid)
         if not attempts:
@@ -381,13 +484,14 @@ else:
             st.session_state.active_screen = "gallery"
 
     steps = [
+        ("home", "📜 Prizes"),
         ("quiz", "🧠 Quiz"),
         ("submit", "🎨 Costume"),
         ("gallery", "👻 Gallery"),
         ("leaderboard", "🏆 Podium")
     ]
 
-    step_cols = st.columns(4)
+    step_cols = st.columns(5)
     for i, (s_key, s_label) in enumerate(steps):
         with step_cols[i]:
             is_active = (st.session_state.active_screen == s_key)
@@ -398,10 +502,12 @@ else:
 
     st.markdown("---")
 
-    # 3. Active Screen View
+    # 3. Active Screen View (Focused, Clean & Uncluttered)
     curr = st.session_state.active_screen
 
-    if curr == "quiz":
+    if curr == "home":
+        render_home_showcase_carousel()
+    elif curr == "quiz":
         render_quiz(user_gid, current_phase)
     elif curr == "submit":
         render_submit(user_gid, current_phase)
@@ -412,9 +518,7 @@ else:
     else:
         render_quiz(user_gid, current_phase)
 
-    # 4. Papa Mo Sponsor, Ghost Twinns & Spooky Dad Joke at bottom of view
-    render_papamo_sponsor()
-    render_twinns_organizers()
+    # 4. Spooky Dad Joke at bottom
     render_dad_joke_card()
 
 

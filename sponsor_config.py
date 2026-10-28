@@ -5,6 +5,23 @@ Sponsor & Organizers Configuration for NXE Pond Fam Halloween App.
 - Official Prizes sponsored by Papa Mo
 """
 
+import os
+import base64
+
+def get_image_base64_data_uri(file_path: str) -> str | None:
+    """Reads an image file and converts it into a base64 Data URI for inline HTML rendering."""
+    if not file_path or not os.path.exists(file_path):
+        return None
+    try:
+        ext = os.path.splitext(file_path)[1].lower().lstrip(".")
+        if ext == "jpg":
+            ext = "jpeg"
+        with open(file_path, "rb") as f:
+            encoded = base64.b64encode(f.read()).decode("utf-8")
+        return f"data:image/{ext};base64,{encoded}"
+    except Exception:
+        return None
+
 # Sponsor Details
 SPONSOR_NAME = "Papa Mo"
 SPONSOR_TITLE = "The Legendary & Wealthy Papa Mo"
@@ -32,9 +49,9 @@ TOURNAMENT_PRIZES = [
     },
     {
         "rank": "🥈 2nd Place Victor",
-        "title": "Everyone Obeys You for 24 Hours",
-        "desc": "Absolute alliance obedience! For 24 full hours, every alliance member in NXE must follow your every command, quack, or decree.",
-        "badge": "🫡 Total Alliance Command",
+        "title": "Everyone Obeys You for 24 Hours (EXCEPT Papa Mo!)",
+        "desc": "Absolute alliance obedience! For 24 full hours, every alliance member in NXE must follow your every command, quack, or decree — EXCEPT the sponsor Papa Mo, who is strictly exempt & commands from his golden lily pad!",
+        "badge": "🫡 Total Alliance Command (Papa Mo Exempt)",
         "color": "#E2E8F0"
     },
     {
@@ -52,7 +69,7 @@ PAPA_MO_QUOTES = [
     "Papa Mo personally funded the 1-Month Card: 'Only the finest loot for our NXE pond champions!' 💎",
     "Official Guarantee from Papa Mo: 100% Certified Spooky, 0% Organic Swamp Slime!",
     "Funded entirely by Papa Mo's secret vault of pumpkin-spice dragon treats! 🐉🥐",
-    "Papa Mo's Decree: 'Whoever wins 2nd place better not make me do pushups in the pond!' 🫡",
+    "Papa Mo's Royal Clarification: 'Whoever wins 2nd place commands the entire alliance, but nobody orders Papa Mo around!' 👑🫡",
     "Rumor has it Papa Mo unionized the pond frogs to protect the 150M RSS dinner delivery! 🐸🍲",
     "Alliance Rule #1 according to Papa Mo: The Ghost Twinns are allowed to cause chaos, as long as everyone has fun! 👻",
     "Papa Mo paid the mist-goblins triple overtime to ensure buttery-smooth mobile loading! 📱💨"
@@ -62,6 +79,6 @@ TWINNS_QUOTES = [
     "Orion & Nobu: 'We may be ghosts now, but our mischief is alive and thriving under Papa Mo's golden patronage!' 👻✨",
     "The Twinns Decree: '150M RSS is waiting at Orion's Pax. Come hungry, leave wealthy!' 🍲🌾",
     "Orion: 'Nobu, did you hide the extra candy corn?' Nobu: 'What candy corn? *burp*' 🦆🎃",
-    "The Mischievous Twinns: 'May the spookiest avatar win, and may the runner-up enjoy bossing the alliance around for 24 hours!' 🫡",
+    "The Mischievous Twinns: 'May the spookiest avatar win, and remember: runner-up bosses everyone around, except Papa Mo!' 🫡",
     "The Twinns: 'We haunt the pond with love, chaos, and Papa Mo's endless supply of shiny prizes!' 👑"
 ]

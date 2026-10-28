@@ -489,6 +489,61 @@ input:focus, textarea:focus {
 }
 
 /* ==============================================
+   STORYBOOK SEGMENTED CAROUSEL TABS
+   ============================================== */
+div[data-baseweb="tab-list"] {
+    background: rgba(18, 9, 32, 0.85) !important;
+    border: 1px solid rgba(167, 139, 250, 0.3) !important;
+    border-radius: 9999px !important;
+    padding: 5px !important;
+    gap: 4px !important;
+    display: flex !important;
+    justify-content: space-around !important;
+    margin-bottom: 1.1rem !important;
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.4) !important;
+}
+
+button[data-baseweb="tab"] {
+    font-family: 'Fredoka', sans-serif !important;
+    font-size: 0.88rem !important;
+    font-weight: 600 !important;
+    color: #DDD6FE !important;
+    background: transparent !important;
+    border-radius: 9999px !important;
+    padding: 8px 12px !important;
+    border: none !important;
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+    white-space: nowrap !important;
+}
+
+button[data-baseweb="tab"]:hover {
+    color: #FFFFFF !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+}
+
+button[data-baseweb="tab"][aria-selected="true"] {
+    background: linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%) !important;
+    color: #FDE047 !important;
+    box-shadow: 0 4px 14px rgba(124, 58, 237, 0.45) !important;
+    font-weight: 700 !important;
+}
+
+div[data-baseweb="tab-highlight"],
+div[data-baseweb="tab-border"] {
+    display: none !important;
+}
+
+/* Officer Portal Quick Add Card */
+.officer-quick-card {
+    background: linear-gradient(135deg, rgba(30, 14, 56, 0.92) 0%, rgba(16, 7, 30, 0.95) 100%) !important;
+    border: 1px solid rgba(52, 211, 153, 0.4) !important;
+    border-radius: 20px !important;
+    padding: 1.1rem !important;
+    margin-top: 0.8rem !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* ==============================================
    MOBILE RESPONSIVENESS (< 600px)
    ============================================== */
 @media (max-width: 600px) {
