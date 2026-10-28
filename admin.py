@@ -110,9 +110,9 @@ def render_admin(test_mode: bool):
                 qual = e["qualified"]
                 is_hidden = e["hidden"]
 
-                status_tag = "🔴 HIDDEN" if is_hidden else ("👑 Qualified" if qual else "🐸 Honorary (Vibes)")
+                status_tag = "🔴 HIDDEN" if is_hidden else "👑 Qualified"
 
-                with st.expander(f"{ign} (Gov: {gid}) — {status_tag} | Score: {score}/5"):
+                with st.expander(f"{ign} (Gov: {gid}) — {status_tag} | Lore Score: {score}/5"):
                     c1, c2 = st.columns([1, 2])
                     with c1:
                         if e.get("thumb_path") or e.get("image_path"):
@@ -120,7 +120,7 @@ def render_admin(test_mode: bool):
                     with c2:
                         st.markdown(f"**In-Game Name:** `{ign}`")
                         st.markdown(f"**Governor ID:** `{gid}`")
-                        st.markdown(f"**Quiz Score:** `{score}/5` ({'Qualified' if qual else 'Not Qualified'})")
+                        st.markdown(f"**Quiz Score:** `{score}/5` *(All contestants stand on 100% equal ground)*")
                         st.markdown(f"**Submitted UTC:** `{e.get('created_at')}`")
                         st.markdown(f"**Backstory:**\n{html.escape(e['backstory'])}")
 
