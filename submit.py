@@ -33,10 +33,10 @@ def render_submit(user_gid: str, current_phase: CompetitionPhase):
     existing_entry = get_entry_by_governor(user_gid)
     is_editing = existing_entry is not None
 
-    # Check quiz score and qualification
+    # Check quiz score and qualification (everyone qualifies on equal ground!)
     attempts = get_quiz_attempts(user_gid)
     best_score = max([a["score"] for a in attempts], default=0) if attempts else 0
-    is_qualified = best_score >= config.QUIZ_QUALIFYING_SCORE
+    is_qualified = True
 
     # Phase check: submissions allowed only in Phase 1
     if current_phase != CompetitionPhase.SUBMISSIONS:
@@ -59,13 +59,11 @@ def render_submit(user_gid: str, current_phase: CompetitionPhase):
                 st.rerun()
         return
 
-    # If user hasn't tried quiz yet, encourage them but allow submit
+    # Everyone competes on equal ground
     if not attempts:
-        st.info("💡 **Psst!** You haven't taken the Spooky Fantasy Lore Quiz yet! You can submit your costume now, but be sure to visit the **Quiz** to earn your voting qualification!")
-    elif is_qualified:
-        st.success(f"👑 **Qualified Entrant!** Your trivia score is {best_score}/5. Your costume will compete in the grand community voting pond!")
+        st.info("💡 **Psst!** You haven't tried the Spooky Fantasy Lore Quiz yet! Feel free to submit your costume now and take the fun quiz anytime.")
     else:
-        st.warning(f"🎭 **Honorary Vibes Entrant!** Your trivia score is {best_score}/5. You can still submit and showcase your costume with a funny honorary badge!")
+        st.success(f"✨ **All Contestants Stand on Equal Ground!** Your trivia flex score is {best_score}/5. Every costume is 100% eligible for community voting and all tournament prizes!")
 
     if is_editing:
         st.markdown('<div class="pond-card pumpkin-accent-card"><strong>✨ Existing Costume Found!</strong> You can update your photo, name, or backstory anytime before the deadline.</div>', unsafe_allow_html=True)

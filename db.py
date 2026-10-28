@@ -318,7 +318,6 @@ def get_leaderboard() -> list[dict]:
     entries_res = (
         client.table("entries")
         .select("id, ingame_name, image_path, thumb_path, backstory, created_at")
-        .eq("qualified", True)
         .eq("hidden", False)
         .execute()
     )

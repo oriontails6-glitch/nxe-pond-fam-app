@@ -25,9 +25,9 @@ from phases import CompetitionPhase
 
 
 def render_quiz(user_gid: str, current_phase: CompetitionPhase):
-    st.markdown("## 🧠 The Spooky Fantasy Lore Gate 🎃")
+    st.markdown("## 🧠 The Spooky Fantasy Lore Initiation 🎃")
     st.markdown("""
-    *Answer 5 questions from the fantasy archives to earn your costume entry into the official community voting pond!*
+    *Answer 5 fun questions from the whimsical pond archives! Trivia scores are purely for bragging rights — all contestants stand on 100% equal ground to win!*
     """)
 
     # Phase check: Trivia allowed ONLY in Phase 1
@@ -36,7 +36,7 @@ def render_quiz(user_gid: str, current_phase: CompetitionPhase):
         attempts = get_quiz_attempts(user_gid)
         if attempts:
             best = max(a["score"] for a in attempts)
-            st.info(f"Your final recorded trivia score is **{best}/5** ({'👑 Qualified' if best >= config.QUIZ_QUALIFYING_SCORE else '🐸 Honorary Vibes'}).")
+            st.info(f"Your final recorded trivia score is **{best}/5** (👑 Official Contestant on Equal Ground!).")
         
         # Guide button to next step
         if st.button("🎨 Go to Costume Submission ➡️", key="quiz_closed_next_btn"):
@@ -49,7 +49,7 @@ def render_quiz(user_gid: str, current_phase: CompetitionPhase):
     attempts_used = len(attempts)
     best_score = max([a["score"] for a in attempts], default=0) if attempts else 0
 
-    st.markdown(f'<div class="pond-card" style="display: flex; justify-content: space-around; text-align: center;"><div><div style="font-size: 0.85rem; color: var(--text-secondary);">ATTEMPTS USED</div><div style="font-family: \'Fredoka\', sans-serif; font-size: 1.5rem; color: var(--sky);">{attempts_used}/{config.QUIZ_MAX_ATTEMPTS}</div></div><div><div style="font-size: 0.85rem; color: var(--text-secondary);">BEST SCORE</div><div style="font-family: \'Fredoka\', sans-serif; font-size: 1.5rem; color: var(--candy);">{best_score}/5</div></div><div><div style="font-size: 0.85rem; color: var(--text-secondary);">STATUS</div><div style="font-family: \'Fredoka\', sans-serif; font-size: 1.2rem; color: {"#39FF14" if best_score >= config.QUIZ_QUALIFYING_SCORE else "#FF7518"};">{"👑 Qualified" if best_score >= config.QUIZ_QUALIFYING_SCORE else "📚 In Progress"}</div></div></div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="pond-card" style="display: flex; justify-content: space-around; text-align: center;"><div><div style="font-size: 0.85rem; color: var(--text-secondary);">ATTEMPTS USED</div><div style="font-family: \'Fredoka\', sans-serif; font-size: 1.5rem; color: var(--sky);">{attempts_used}/{config.QUIZ_MAX_ATTEMPTS}</div></div><div><div style="font-size: 0.85rem; color: var(--text-secondary);">LORE FLEX SCORE</div><div style="font-family: \'Fredoka\', sans-serif; font-size: 1.5rem; color: var(--candy);">{best_score}/5</div></div><div><div style="font-size: 0.85rem; color: var(--text-secondary);">STATUS</div><div style="font-family: \'Fredoka\', sans-serif; font-size: 1.2rem; color: #34D399;">{"👑 Ready to Compete!" if attempts_used > 0 else "📚 In Progress"}</div></div></div>', unsafe_allow_html=True)
 
     # Check 30-second cooldown from newest attempt
     if attempts:
@@ -60,35 +60,23 @@ def render_quiz(user_gid: str, current_phase: CompetitionPhase):
             st.warning(f"⏳ The ghosts are reviewing your scroll! Please wait **{remaining_cd} seconds** before attempting again.")
             return
 
-    # If already passed or finished all 3 attempts: guide forward!
-    if best_score >= config.QUIZ_QUALIFYING_SCORE:
-        st.success(f"🎉 **BOO-YAH!** You conquered the lore gate with a score of **{best_score}/5**! Your costume is officially qualified!")
+    # If already took an attempt, guide forward while allowing more tries if available
+    if attempts_used > 0:
+        st.success(f"🎉 **Initiation Complete!** Your best trivia score is **{best_score}/5**! (All contestants stand on 100% equal ground to win the tournament prizes!)")
         st.markdown("""
         <div class="next-step-box">
             <h3 style="color: var(--candy); margin: 0 0 0.4rem 0;">🎃 Step 1 Complete!</h3>
-            <p style="color: #F8FAFC; margin-bottom: 0.8rem;">Your trivia score is locked in. Let's make your spooky Halloween costume!</p>
+            <p style="color: #F8FAFC; margin-bottom: 0.8rem;">Your costume stands on equal ground! Ready to upload your photo & backstory?</p>
         </div>
         """, unsafe_allow_html=True)
         if st.button("🎨 Continue to Costume Submission ➡️", key="quiz_pass_proceed_btn"):
             st.session_state.active_screen = "submit"
             st.rerun()
-        st.markdown("---")
 
-    elif attempts_used >= config.QUIZ_MAX_ATTEMPTS:
-        st.error(f"🐸 All 3 attempts used! Your best score was **{best_score}/5**.")
-        st.markdown("""
-        <div class="next-step-box">
-            <h3 style="color: var(--pumpkin); margin: 0 0 0.4rem 0;">🐸 You Are an Honorary Vibes Champion!</h3>
-            <p style="color: #F8FAFC; margin-bottom: 0.8rem;">
-                No worries at all! In the NXE Pond Fam, <strong>everyone</strong> gets to show off their Halloween outfit!
-                Your entry will receive a legendary honorary badge in the gallery.
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-        if st.button("🎨 Continue to Costume Submission ➡️", key="quiz_fail_proceed_btn"):
-            st.session_state.active_screen = "submit"
-            st.rerun()
-        return
+        if attempts_used >= config.QUIZ_MAX_ATTEMPTS:
+            st.markdown("---")
+            return
+        st.caption("Want to flex your lore knowledge with another attempt? You can try again below (scores are for fun):")
 
     # Quiz initialization in session_state
     if "current_quiz_questions" not in st.session_state or st.session_state.get("quiz_attempt_num") != attempts_used:
@@ -149,17 +137,15 @@ def render_quiz(user_gid: str, current_phase: CompetitionPhase):
 
             # Update entry if exists and score improved
             new_best = max(best_score, score)
-            qualified = new_best >= config.QUIZ_QUALIFYING_SCORE
             existing_entry = get_entry_by_governor(user_gid)
             if existing_entry:
-                update_entry_quiz_status(user_gid, new_best, qualified)
+                update_entry_quiz_status(user_gid, new_best, True)
 
             # Clear session questions
             if "current_quiz_questions" in st.session_state:
                 del st.session_state.current_quiz_questions
 
-            # Celebrate
-            if score >= config.QUIZ_QUALIFYING_SCORE:
-                st.balloons()
-                st.session_state.active_screen = "submit"
+            # Celebrate completion (everyone qualifies on equal ground!)
+            st.balloons()
+            st.session_state.active_screen = "submit"
             st.rerun()

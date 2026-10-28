@@ -115,11 +115,7 @@ All contestant costumes are safely resting under the moonlit lily pads to keep e
 </details>"""
             st.markdown(card_html, unsafe_allow_html=True)
 
-            if not is_qualified:
-                tag = config.get_non_qualified_tag(eid)
-                st.markdown(f'<div class="non-qualified-badge">{tag}</div>', unsafe_allow_html=True)
-            else:
-                st.markdown('<div style="color: var(--slime); font-size: 0.9rem; font-weight: 700; margin: 4px 0 10px 0;">👑 Qualified Costume</div>', unsafe_allow_html=True)
+            st.markdown('<div style="color: #34D399; font-size: 0.9rem; font-weight: 700; margin: 4px 0 10px 0;">🎃 Official Contestant</div>', unsafe_allow_html=True)
 
             # Voting Controls (Active in Phase 3)
             if current_phase == CompetitionPhase.VOTING:
@@ -136,8 +132,6 @@ All contestant costumes are safely resting under the moonlit lily pads to keep e
                                 st.rerun()
                             else:
                                 st.error(res.get("message", "Error removing vote."))
-                elif not is_qualified:
-                    st.caption("🎭 Honorary entry (No votes permitted)")
                 elif votes_left > 0:
                     if st.button(f"🗳️ Vote for Costume #{idx}", key=f"vote_{eid}"):
                         res = cast_vote(user_gid, eid)

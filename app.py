@@ -332,8 +332,8 @@ def render_home_showcase_carousel():
         st.markdown("""<div class="pond-card" style="text-align: left;">
 <div style="font-family: 'Fredoka', sans-serif; font-size: 1.25rem; color: #FBBF24; margin-bottom: 0.8rem; text-align: center;">📜 Tournament Guidelines & How to Win</div>
 <div style="margin-bottom: 0.85rem;">
-    <strong style="color: #FDE047; font-size: 0.96rem;">1. 🧠 Step 1: Pass the 5-Question Lore Quiz</strong>
-    <p style="color: #DDD6FE; font-size: 0.88rem; margin: 3px 0 0 0; line-height: 1.45;">Score at least <strong>3 out of 5 (3/5)</strong> to earn the 👑 Qualified Contestant status. (Scored below 3? You still compete in the fun Honorary Vibes tier with custom spooky badges!).</p>
+    <strong style="color: #FDE047; font-size: 0.96rem;">1. 🧠 Step 1: Complete the 5-Question Lore Initiation</strong>
+    <p style="color: #DDD6FE; font-size: 0.88rem; margin: 3px 0 0 0; line-height: 1.45;">Answer 5 questions from the whimsical pond archives! <strong>All contestants stand on 100% equal ground to win</strong> — trivia scores are purely for pond bragging rights and do not disqualify anyone!</p>
 </div>
 <div style="margin-bottom: 0.85rem;">
     <strong style="color: #FDE047; font-size: 0.96rem;">2. 🎨 Step 2: Upload Avatar & Spooky Backstory</strong>
