@@ -270,12 +270,12 @@ def update_entry_quiz_status(governor_id: str, best_score: int, qualified: bool)
 def get_public_gallery_entries() -> list[dict]:
     """
     Fetches all non-hidden entries for the anonymous gallery.
-    NEVER includes governor_id or ingame_name in client gallery view.
+    Includes governor_id internally for server-side exhibition/voting rules.
     """
     client = get_supabase_client()
     res = (
         client.table("entries")
-        .select("id, image_path, thumb_path, backstory, qualified, created_at")
+        .select("id, governor_id, image_path, thumb_path, backstory, qualified, created_at")
         .eq("hidden", False)
         .order("created_at", desc=False)
         .execute()
@@ -293,6 +293,12 @@ def get_voter_cast_votes(voter_id: str) -> list[str]:
 def cast_vote(voter_id: str, entry_id: str) -> dict:
     """Calls the PostgreSQL RPC function cast_vote for atomic concurrency-safe voting."""
     client = get_supabase_client()
+
+    # Rule: Specific governor 409716271 is an exhibition-only entry that cannot receive votes
+    chk = client.table("entries").select("governor_id").eq("id", entry_id).execute()
+    if chk.data and chk.data[0].get("governor_id") == "409716271":
+        return {"success": False, "message": "This costume is an exhibition entry and is not eligible for community voting."}
+
     res = client.rpc("cast_vote", {"p_voter_id": voter_id, "p_entry_id": entry_id}).execute()
     return res.data
 
@@ -313,15 +319,17 @@ def get_leaderboard() -> list[dict]:
     Computes leaderboard ranking from votes table for qualified, non-hidden entries.
     Reveals winner's in-game name and avatar image!
     Handles ties by assigning shared ranks.
+    Exhibition entry (409716271) is excluded from competitive podium prize rankings.
     """
     client = get_supabase_client()
     entries_res = (
         client.table("entries")
-        .select("id, ingame_name, image_path, thumb_path, backstory, created_at")
+        .select("id, governor_id, ingame_name, image_path, thumb_path, backstory, created_at")
         .eq("hidden", False)
         .execute()
     )
-    entries = entries_res.data or []
+    raw_entries = entries_res.data or []
+    entries = [e for e in raw_entries if e.get("governor_id") != "409716271"]
 
     # Get vote counts
     votes_res = client.table("votes").select("entry_id").execute()

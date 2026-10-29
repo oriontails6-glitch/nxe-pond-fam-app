@@ -27,7 +27,7 @@ def sanitize_text(text: str) -> str:
 
 
 def render_submit(user_gid: str, current_phase: CompetitionPhase, phase_info: dict | None = None):
-    st.markdown("## 🎨 Costume & Avatar Submission Portal 🎃")
+    st.markdown("## Costume Submission Portal")
 
     # Check existing entry
     existing_entry = get_entry_by_governor(user_gid)
@@ -46,33 +46,33 @@ def render_submit(user_gid: str, current_phase: CompetitionPhase, phase_info: di
         can_submit = False
 
     if not can_submit:
-        st.warning(f"🔒 Costume submissions are currently closed (Deadline: 29 Oct 19:00 UTC). Current stage: **{current_phase.label}**.")
+        st.warning(f"Costume submissions closed at 19:00 UTC on 29 Oct. Current stage: **{current_phase.label}**.")
         if existing_entry:
-            st.info("Your costume is safely locked inside the mist-shrouded pond vault:")
+            st.info("Your costume is safely submitted in the pond vault:")
             if existing_entry.get("thumb_path"):
-                st.image(existing_entry["thumb_path"], caption="Your Spooky Avatar", width=300)
+                st.image(existing_entry["thumb_path"], caption="Your Costume Avatar", width=300)
             st.markdown(f"**In-Game Name:** {html.escape(existing_entry['ingame_name'])}")
             st.markdown(f"**Backstory:** {html.escape(existing_entry['backstory'])}")
 
             st.markdown("""
             <div class="next-step-box">
-                <h3 style="color: var(--candy); margin: 0 0 0.4rem 0;">👻 Costume Locked & Ready!</h3>
-                <p style="color: #F8FAFC; margin-bottom: 0.8rem;">Ready to inspect everyone's spooky costumes in the gallery?</p>
+                <h3 style="color: var(--candy); margin: 0 0 0.4rem 0;">Costume Saved & Locked</h3>
+                <p style="color: #F8FAFC; margin-bottom: 0.8rem;">Ready to inspect everyone's costumes in the gallery?</p>
             </div>
             """, unsafe_allow_html=True)
-            if st.button("👻 Explore the Spooky Costume Gallery ➡️", key="sub_locked_to_gal"):
+            if st.button("Explore Costume Gallery →", key="sub_locked_to_gal"):
                 st.session_state.active_screen = "gallery"
                 st.rerun()
         return
 
     # Everyone competes on equal ground
     if not attempts:
-        st.info("💡 **Psst!** You haven't tried the Spooky Fantasy Lore Quiz yet! Feel free to submit your costume now and take the fun quiz anytime.")
+        st.info("Note: You haven't taken the Lore Initiation yet. Feel free to submit your costume now and take the quiz anytime.")
     else:
-        st.success(f"✨ **All Contestants Stand on Equal Ground!** Your trivia flex score is {best_score}/5. Every costume is 100% eligible for community voting and all tournament prizes!")
+        st.success(f"All contestants compete on equal ground. Lore score: {best_score}/5. Every costume is eligible for community voting.")
 
     if is_editing:
-        st.markdown('<div class="pond-card pumpkin-accent-card"><strong>✨ Existing Costume Found!</strong> You can update your photo, name, or backstory anytime before the deadline.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="pond-card pumpkin-accent-card"><strong>Existing Costume Found:</strong> You can update your photo, name, or backstory anytime before the deadline.</div>', unsafe_allow_html=True)
 
     default_name = existing_entry["ingame_name"] if is_editing else ""
     default_backstory = existing_entry["backstory"] if is_editing else ""
@@ -85,7 +85,7 @@ def render_submit(user_gid: str, current_phase: CompetitionPhase, phase_info: di
             placeholder="e.g. SpookyDuckling99"
         )
 
-        st.markdown("#### 📸 Avatar Image")
+        st.markdown("#### Avatar Image")
         st.caption("Upload a PNG or JPG photo (max 5 MB). The app will automatically convert it to WebP and remove EXIF data.")
         avatar_file = st.file_uploader(
             "Select costume photo",
@@ -102,14 +102,14 @@ def render_submit(user_gid: str, current_phase: CompetitionPhase, phase_info: di
             value=default_backstory,
             max_chars=config.BACKSTORY_MAX_CHARS,
             height=130,
-            placeholder="Describe your character's eerie origin, comedic pond escapades, or spooky goblin title..."
+            placeholder="Describe your character's origin, comedic pond escapades, or goblin title..."
         )
 
         chars_len = len(backstory_input.strip())
         st.caption(f"Length: {chars_len}/{config.BACKSTORY_MAX_CHARS} characters")
 
         submit_btn = st.form_submit_button(
-            "🎃 Update My Costume" if is_editing else "🎃 Seal My Costume in the Pond Vault!"
+            "Update My Costume" if is_editing else "Submit Costume to Pond Vault"
         )
 
         if submit_btn:
@@ -121,7 +121,7 @@ def render_submit(user_gid: str, current_phase: CompetitionPhase, phase_info: di
                 return
 
             if not clean_backstory:
-                st.error("Please write a spooky or silly character backstory!")
+                st.error("Please write a character backstory!")
                 return
 
             # Handle image
@@ -161,18 +161,24 @@ def render_submit(user_gid: str, current_phase: CompetitionPhase, phase_info: di
                 )
 
                 st.balloons()
-                st.success("🎃 **BOO! Your costume has been sealed in the vault!**")
+                st.success("Your costume has been successfully saved in the vault!")
                 st.session_state.active_screen = "gallery"
                 st.rerun()
 
             except Exception:
-                st.error("A spooky swamp hiccup occurred! Could not save right now. Please try again.")
+                st.error("A network error occurred! Could not save right now. Please try again.")
 
     # Navigation Bar
     st.markdown("---")
     col_sn1, col_sn2 = st.columns(2)
     with col_sn1:
-        if st.button("⬅️ Back to Quiz", key="sub_back_to_quiz"):
+        if st.button("← Back to Quiz", key="sub_back_to_quiz"):
+            st.session_state.active_screen = "quiz"
+            st.rerun()
+    with col_sn2:
+        if st.button("Explore Costume Gallery →", key="sub_to_gallery"):
+            st.session_state.active_screen = "gallery"
+            st.rerun()
             st.session_state.active_screen = "quiz"
             st.rerun()
     with col_sn2:

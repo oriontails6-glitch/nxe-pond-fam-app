@@ -25,9 +25,9 @@ from phases import CompetitionPhase
 
 
 def render_quiz(user_gid: str, current_phase: CompetitionPhase, phase_info: dict | None = None):
-    st.markdown("## 🧠 The Spooky Fantasy Lore Initiation 🎃")
+    st.markdown("## Whimsical Lore Initiation")
     st.markdown("""
-    *Answer 5 fun questions from the whimsical pond archives! Trivia scores are purely for bragging rights — all contestants stand on 100% equal ground to win!*
+    *Answer 5 fun questions from the pond archives! Trivia scores are purely for bragging rights — all contestants stand on 100% equal ground to win!*
     """)
 
     # Phase check: Trivia allowed when submissions are open
@@ -38,14 +38,14 @@ def render_quiz(user_gid: str, current_phase: CompetitionPhase, phase_info: dict
         can_submit = False
 
     if not can_submit:
-        st.warning(f"🔒 The Trivia Gate is sleeping during **{current_phase.label}**. No new quiz attempts can be made.")
+        st.warning(f"The Trivia Gate closed at 19:00 UTC on 29 Oct. Current stage: **{current_phase.label}**.")
         attempts = get_quiz_attempts(user_gid)
         if attempts:
             best = max(a["score"] for a in attempts)
-            st.info(f"Your final recorded trivia score is **{best}/5** (👑 Official Contestant on Equal Ground!).")
+            st.info(f"Your final recorded trivia score is **{best}/5** (Official Contestant on Equal Ground).")
         
         # Guide button to next step
-        if st.button("🎨 Go to Costume Submission ➡️", key="quiz_closed_next_btn"):
+        if st.button("Costume Submission →", key="quiz_closed_next_btn"):
             st.session_state.active_screen = "submit"
             st.rerun()
         return
@@ -55,7 +55,7 @@ def render_quiz(user_gid: str, current_phase: CompetitionPhase, phase_info: dict
     attempts_used = len(attempts)
     best_score = max([a["score"] for a in attempts], default=0) if attempts else 0
 
-    st.markdown(f'<div class="pond-card" style="display: flex; justify-content: space-around; text-align: center;"><div><div style="font-size: 0.85rem; color: var(--text-secondary);">ATTEMPTS USED</div><div style="font-family: \'Fredoka\', sans-serif; font-size: 1.5rem; color: var(--sky);">{attempts_used}/{config.QUIZ_MAX_ATTEMPTS}</div></div><div><div style="font-size: 0.85rem; color: var(--text-secondary);">LORE FLEX SCORE</div><div style="font-family: \'Fredoka\', sans-serif; font-size: 1.5rem; color: var(--candy);">{best_score}/5</div></div><div><div style="font-size: 0.85rem; color: var(--text-secondary);">STATUS</div><div style="font-family: \'Fredoka\', sans-serif; font-size: 1.2rem; color: #34D399;">{"👑 Ready to Compete!" if attempts_used > 0 else "📚 In Progress"}</div></div></div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="pond-card" style="display: flex; justify-content: space-around; text-align: center;"><div><div style="font-size: 0.85rem; color: var(--text-secondary);">ATTEMPTS USED</div><div style="font-family: \'Fredoka\', sans-serif; font-size: 1.5rem; color: var(--sky);">{attempts_used}/{config.QUIZ_MAX_ATTEMPTS}</div></div><div><div style="font-size: 0.85rem; color: var(--text-secondary);">LORE SCORE</div><div style="font-family: \'Fredoka\', sans-serif; font-size: 1.5rem; color: var(--candy);">{best_score}/5</div></div><div><div style="font-size: 0.85rem; color: var(--text-secondary);">STATUS</div><div style="font-family: \'Fredoka\', sans-serif; font-size: 1.2rem; color: #34D399;">{"Ready to Compete" if attempts_used > 0 else "In Progress"}</div></div></div>', unsafe_allow_html=True)
 
     # Check 30-second cooldown from newest attempt
     if attempts:

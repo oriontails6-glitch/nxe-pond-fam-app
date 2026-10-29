@@ -173,7 +173,7 @@ st.markdown(f"""<div class="storybook-hero-card">
 {banner_scene_html}
 <div class="storybook-title">NXE POND FAM</div>
 <div class="storybook-subtitle">Spooky Halloween Avatar & Costume Championship</div>
-<div class="storybook-badge">👑 King Shot Alliance NXE</div>
+<div class="storybook-badge">King Shot Alliance NXE</div>
 </div>""", unsafe_allow_html=True)
 
 # Phase Banner with Live UTC Countdown
@@ -182,12 +182,12 @@ phase_tag = f'<span class="phase-badge" style="background-color: {banner_color};
 server_clock_str = phase_info.get("server_utc_str", "UTC")
 
 if current_phase == CompetitionPhase.RESULTS:
-    countdown_display = f'<div style="margin-top: 6px;"><div style="color: var(--text-secondary); font-size: 0.88rem;">🕒 Server Clock: <strong style="color: #FFFFFF;">{server_clock_str}</strong></div><div style="color: #34D399; font-weight: 700; margin-top: 4px;">🏆 Competition Concluded! Check the Champion Podium!</div></div>'
+    countdown_display = f'<div style="margin-top: 6px;"><div style="color: var(--text-secondary); font-size: 0.88rem;">Server Clock: <strong style="color: #FFFFFF;">{server_clock_str}</strong></div><div style="color: #34D399; font-weight: 700; margin-top: 4px;">Competition Concluded! View the Champion Podium.</div></div>'
 elif phase_info.get("target_time"):
     target_str = format_utc_display(phase_info["target_time"])
-    countdown_display = f'<div style="margin-top: 6px;"><div style="color: var(--text-secondary); font-size: 0.88rem;">🕒 Server Clock: <strong style="color: #FFFFFF;">{server_clock_str}</strong></div><div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-top: 4px;"><span style="color: var(--text-secondary); font-size: 0.9rem;">{phase_info["target_label"]}: <strong style="color: #FFFFFF;">{target_str}</strong></span><span style="font-family: \'Fredoka\', sans-serif; font-size: 1.15rem; color: #FBBF24; font-weight: 700;">⏳ {phase_info["countdown_str"]}</span></div></div>'
+    countdown_display = f'<div style="margin-top: 6px;"><div style="color: var(--text-secondary); font-size: 0.88rem;">Server Clock: <strong style="color: #FFFFFF;">{server_clock_str}</strong></div><div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-top: 4px;"><span style="color: var(--text-secondary); font-size: 0.9rem;">{phase_info["target_label"]}: <strong style="color: #FFFFFF;">{target_str}</strong></span><span style="font-family: \'Fredoka\', sans-serif; font-size: 1.15rem; color: #FBBF24; font-weight: 700;">{phase_info["countdown_str"]}</span></div></div>'
 else:
-    countdown_display = f'<div style="margin-top: 6px;"><div style="color: var(--text-secondary); font-size: 0.88rem;">🕒 Server Clock: <strong style="color: #FFFFFF;">{server_clock_str}</strong></div><div style="color: #FBBF24; font-weight: 700; margin-top: 4px;">🎃 {current_phase.label} Active!</div></div>'
+    countdown_display = f'<div style="margin-top: 6px;"><div style="color: var(--text-secondary); font-size: 0.88rem;">Server Clock: <strong style="color: #FFFFFF;">{server_clock_str}</strong></div><div style="color: #FBBF24; font-weight: 700; margin-top: 4px;">{current_phase.label} Active</div></div>'
 
 banner_html = f'<div class="phase-banner"><div>{phase_tag}</div>{countdown_display}</div>'
 st.markdown(banner_html, unsafe_allow_html=True)
@@ -221,14 +221,13 @@ def render_dad_joke_card():
     q, a = DAD_JOKES[idx]
     st.markdown("---")
     st.markdown(f"""<div class="pond-card" style="text-align: center; border: 1px solid #7C3AED; background: linear-gradient(180deg, #240E3E 0%, #170929 100%); padding: 1.1rem;">
-<div style="font-size: 1.4rem; margin-bottom: 0.3rem;">🦆 🎃 🐉</div>
-<div style="font-size: 0.82rem; font-weight: 700; color: #A78BFA; text-transform: uppercase; letter-spacing: 1px;">Spooky Pond Dad Joke</div>
+<div style="font-size: 0.82rem; font-weight: 700; color: #A78BFA; text-transform: uppercase; letter-spacing: 1px;">Pond Dad Joke</div>
 <div style="font-family: 'Fredoka', sans-serif; font-size: 1.1rem; color: #FDE047; margin: 0.5rem 0 0.2rem 0;">"{q}"</div>
-<div style="font-size: 1rem; color: #FFFFFF; font-weight: 600;">👉 {a}</div>
+<div style="font-size: 1rem; color: #FFFFFF; font-weight: 600;">{a}</div>
 </div>""", unsafe_allow_html=True)
     col_j1, col_j2, col_j3 = st.columns([1, 2, 1])
     with col_j2:
-        if st.button("🎲 Tell Me Another Joke!", key="roll_dad_joke_btn"):
+        if st.button("Tell Me Another Joke", key="roll_dad_joke_btn"):
             st.session_state.joke_idx = (idx + 1) % len(DAD_JOKES)
             st.rerun()
 
@@ -240,27 +239,31 @@ def render_home_showcase_carousel():
 
     active_tab = st.session_state.home_carousel_tab
 
-    st.markdown('<div style="text-align: center; margin: 1.4rem 0 0.6rem 0;"><span style="font-family: \'Fredoka\', sans-serif; font-size: 1.15rem; color: #FBBF24; font-weight: 700;">✨ Tournament Lore, Prizes & Benefactors ✨</span></div>', unsafe_allow_html=True)
+    st.markdown('<div style="text-align: center; margin: 1.4rem 0 0.6rem 0;"><span style="font-family: \'Fredoka\', sans-serif; font-size: 1.15rem; color: #FBBF24; font-weight: 700;">Tournament Lore, Prizes & Guidelines</span></div>', unsafe_allow_html=True)
 
     col_t1, col_t2, col_t3, col_t4 = st.columns(4)
     with col_t1:
         is_sel = (active_tab == "rewards")
-        if st.button("⭐ 🏆 Prizes" if is_sel else "🏆 Prizes", key="h_tab_rewards"):
+        lbl = "● Prizes" if is_sel else "Prizes"
+        if st.button(lbl, key="h_tab_rewards"):
             st.session_state.home_carousel_tab = "rewards"
             st.rerun()
     with col_t2:
         is_sel = (active_tab == "sponsor")
-        if st.button("⭐ 👑 Papa Mo" if is_sel else "👑 Papa Mo", key="h_tab_sponsor"):
+        lbl = "● Papa Mo" if is_sel else "Papa Mo"
+        if st.button(lbl, key="h_tab_sponsor"):
             st.session_state.home_carousel_tab = "sponsor"
             st.rerun()
     with col_t3:
         is_sel = (active_tab == "twinns")
-        if st.button("⭐ 👻 Twinns" if is_sel else "👻 Twinns", key="h_tab_twinns"):
+        lbl = "● Twinns" if is_sel else "Twinns"
+        if st.button(lbl, key="h_tab_twinns"):
             st.session_state.home_carousel_tab = "twinns"
             st.rerun()
     with col_t4:
         is_sel = (active_tab == "guide")
-        if st.button("⭐ 📜 Rules" if is_sel else "📜 Rules", key="h_tab_guide"):
+        lbl = "● Rules" if is_sel else "Rules"
+        if st.button(lbl, key="h_tab_guide"):
             st.session_state.home_carousel_tab = "guide"
             st.rerun()
 
@@ -273,8 +276,8 @@ def render_home_showcase_carousel():
             </div>""" for p in TOURNAMENT_PRIZES
         ])
         st.markdown(f"""<div class="pond-card" style="padding-bottom: 0.5rem;">
-<div style="font-family: 'Fredoka', sans-serif; font-size: 1.25rem; color: #FBBF24; margin-bottom: 0.6rem; text-align: center;">🏆 Official Tournament Rewards</div>
-<div style="text-align: center; color: #DDD6FE; font-size: 0.88rem; margin-bottom: 1rem;">Funded directly from the royal treasury of <strong>Papa Mo</strong>!</div>
+<div style="font-family: 'Fredoka', sans-serif; font-size: 1.25rem; color: #FBBF24; margin-bottom: 0.6rem; text-align: center;">Official Tournament Rewards</div>
+<div style="text-align: center; color: #DDD6FE; font-size: 0.88rem; margin-bottom: 1rem;">Sponsored directly by <strong>Papa Mo</strong></div>
 {prizes_html}
 </div>""", unsafe_allow_html=True)
 
@@ -285,12 +288,12 @@ def render_home_showcase_carousel():
         p_quote = PAPA_MO_QUOTES[idx_p]
 
         sponsor_uri = get_image_base64_data_uri(SPONSOR_IMAGE) or get_image_base64_data_uri(SPONSOR_IMAGE_FALLBACK)
-        img_sponsor_html = f'<img src="{sponsor_uri}" class="brand-banner-img" alt="Papa Mo Sponsor" />' if sponsor_uri else '<div style="font-size: 2.3rem; margin: 0.15rem 0;">👑 🦆 👑</div>'
+        img_sponsor_html = f'<img src="{sponsor_uri}" class="brand-banner-img" alt="Papa Mo Sponsor" />' if sponsor_uri else '<div style="font-size: 2rem; margin: 0.15rem 0;">👑</div>'
 
         st.markdown(f"""<div class="papamo-sponsor-card">
-<div class="papamo-badge">👑 OFFICIAL TOURNAMENT SPONSOR 👑</div>
+<div class="papamo-badge">OFFICIAL TOURNAMENT SPONSOR</div>
 {img_sponsor_html}
-<div class="papamo-title">PAPA MO'S ROYAL POND PATRONAGE</div>
+<div class="papamo-title">PAPA MO'S ROYAL PATRONAGE</div>
 <div style="font-size: 0.9rem; color: #FDE68A; font-weight: 600; margin-bottom: 0.2rem;">{SPONSOR_TITLE}</div>
 <div style="font-size: 0.82rem; color: #DDD6FE; margin-bottom: 0.7rem;">{SPONSOR_SUBTITLE}</div>
 <div class="papamo-quote-box">
@@ -299,7 +302,7 @@ def render_home_showcase_carousel():
 </div>""", unsafe_allow_html=True)
         c1, c2, c3 = st.columns([1, 2, 1])
         with c2:
-            if st.button("🎲 Roll Next Papa Mo Decree!", key="papamo_carousel_refresh"):
+            if st.button("Roll Next Sponsor Decree", key="papamo_carousel_refresh"):
                 st.session_state.papamo_idx = (idx_p + 1) % len(PAPA_MO_QUOTES)
                 st.rerun()
 
@@ -310,10 +313,10 @@ def render_home_showcase_carousel():
         t_quote = TWINNS_QUOTES[idx_t]
 
         org_uri = get_image_base64_data_uri(ORGANIZERS_IMAGE) or get_image_base64_data_uri(ORGANIZERS_IMAGE_FALLBACK)
-        img_org_html = f'<img src="{org_uri}" class="brand-banner-img" alt="The Ghost Twinns: Orion & Nobu" />' if org_uri else '<div style="font-size: 2.3rem; margin: 0.15rem 0;">👻 👻 🪷</div>'
+        img_org_html = f'<img src="{org_uri}" class="brand-banner-img" alt="The Ghost Twinns: Orion & Nobu" />' if org_uri else '<div style="font-size: 2rem; margin: 0.15rem 0;">👻</div>'
 
         st.markdown(f"""<div class="organizers-card">
-<div class="organizers-badge">👻 TOURNAMENT ORGANIZERS 👻</div>
+<div class="organizers-badge">TOURNAMENT ORGANIZERS</div>
 {img_org_html}
 <div style="font-family: 'Fredoka', sans-serif; font-size: 1.35rem; font-weight: 700; color: #E9D5FF; margin: 0.2rem 0;">{ORGANIZERS_NAME}</div>
 <div style="font-size: 0.9rem; color: #DDD6FE; font-weight: 600; margin-bottom: 0.2rem;">{ORGANIZERS_TITLE}</div>
@@ -324,27 +327,27 @@ def render_home_showcase_carousel():
 </div>""", unsafe_allow_html=True)
         c1, c2, c3 = st.columns([1, 2, 1])
         with c2:
-            if st.button("🎲 Roll Twinns Ghost Lore!", key="twinns_carousel_refresh"):
+            if st.button("Roll Next Twinns Lore", key="twinns_carousel_refresh"):
                 st.session_state.twinns_idx = (idx_t + 1) % len(TWINNS_QUOTES)
                 st.rerun()
 
     else:
         st.markdown("""<div class="pond-card" style="text-align: left;">
-<div style="font-family: 'Fredoka', sans-serif; font-size: 1.25rem; color: #FBBF24; margin-bottom: 0.8rem; text-align: center;">📜 Tournament Guidelines & How to Win</div>
+<div style="font-family: 'Fredoka', sans-serif; font-size: 1.25rem; color: #FBBF24; margin-bottom: 0.8rem; text-align: center;">Tournament Guidelines & Rules</div>
 <div style="margin-bottom: 0.85rem;">
-    <strong style="color: #FDE047; font-size: 0.96rem;">1. 🧠 Step 1: Complete the 5-Question Lore Initiation</strong>
+    <strong style="color: #FDE047; font-size: 0.96rem;">1. Step 1: Complete Lore Initiation</strong>
     <p style="color: #DDD6FE; font-size: 0.88rem; margin: 3px 0 0 0; line-height: 1.45;">Answer 5 questions from the whimsical pond archives! <strong>All contestants stand on 100% equal ground to win</strong> — trivia scores are purely for pond bragging rights and do not disqualify anyone!</p>
 </div>
 <div style="margin-bottom: 0.85rem;">
-    <strong style="color: #FDE047; font-size: 0.96rem;">2. 🎨 Step 2: Upload Avatar & Spooky Backstory</strong>
-    <p style="color: #DDD6FE; font-size: 0.88rem; margin: 3px 0 0 0; line-height: 1.45;">Upload your in-game Halloween avatar screenshot and write the story or joke behind your costume. Mobile-optimized for landscape & portrait screenshots with tap-to-reveal stories.</p>
+    <strong style="color: #FDE047; font-size: 0.96rem;">2. Step 2: Upload Avatar & Backstory</strong>
+    <p style="color: #DDD6FE; font-size: 0.88rem; margin: 3px 0 0 0; line-height: 1.45;">Upload your in-game Halloween avatar screenshot and write the story behind your costume (up to 600 characters). Optimized for both landscape & portrait screenshots with tap-to-reveal stories.</p>
 </div>
 <div style="margin-bottom: 0.85rem;">
-    <strong style="color: #FDE047; font-size: 0.96rem;">3. 🗳️ Step 3: Vote for Your 3 Favorites</strong>
+    <strong style="color: #FDE047; font-size: 0.96rem;">3. Step 3: Vote for Your 3 Favorites</strong>
     <p style="color: #DDD6FE; font-size: 0.88rem; margin: 3px 0 0 0; line-height: 1.45;">During the live voting round, every verified governor gets exactly 3 votes. Tap any costume card in the gallery to expand its story and cast your votes!</p>
 </div>
 <div>
-    <strong style="color: #FDE047; font-size: 0.96rem;">4. 🏆 Step 4: Claim Podium Glory & Riches</strong>
+    <strong style="color: #FDE047; font-size: 0.96rem;">4. Step 4: Claim Podium Glory & Riches</strong>
     <p style="color: #DDD6FE; font-size: 0.88rem; margin: 3px 0 0 0; line-height: 1.45;">When voting concludes, the automated podium crowns the champions! 1st takes the Month Card, 2nd commands the alliance for 24h (except Papa Mo & the Twinns can refuse silly orders!), and 3rd feasts on 150M RSS at Orion's Pax (wipe your feet!).</p>
 </div>
 </div>""", unsafe_allow_html=True)
@@ -447,20 +450,20 @@ if not user_gid:
     # GUEST & LOGIN VIEW (NO CLUTTERED TABS)
     portal_choice = st.radio(
         "Sign-In Portal",
-        ["🧙 Contestant Sign-In", "🛡️ Alliance Officer / Co-Admin Portal"],
+        ["Contestant Sign-In", "Officer & Admin Portal"],
         horizontal=True,
         label_visibility="collapsed",
         key="main_login_portal_selector"
     )
 
-    if portal_choice == "🧙 Contestant Sign-In":
-        st.subheader("🔑 Contestant Login")
+    if portal_choice == "Contestant Sign-In":
+        st.subheader("Contestant Login")
         st.caption("Enter your King Shot Governor ID and secret alliance join code to compete:")
 
         with st.form("login_form"):
             gov_in = st.text_input("Governor ID (digits only)", max_chars=20, placeholder="e.g. 296378532")
-            join_in = st.text_input("Alliance Secret Quack (Join Code)", type="password", placeholder="From alliance chat (NXEHALLOWEEN2026)")
-            login_btn = st.form_submit_button("🎃 Enter the Haunted Pond!")
+            join_in = st.text_input("Alliance Secret Code", type="password", placeholder="From alliance chat (NXEHALLOWEEN2026)")
+            login_btn = st.form_submit_button("Sign In to NXE Pond")
 
             if login_btn:
                 clean_gid = (gov_in or "").strip()
@@ -472,16 +475,16 @@ if not user_gid:
                     # Detect if user accidentally typed admin password here
                     admin_users = st.secrets.get("ADMIN_USERS", {})
                     if any(clean_join == str(p) for p in admin_users.values()):
-                        st.warning("💡 That looks like an Officer Passkey! Switch to the **'🛡️ Alliance Officer / Co-Admin Portal'** tab above to access officer tools.")
+                        st.warning("That looks like an Officer Passkey! Switch to the **'Officer & Admin Portal'** tab above to access officer tools.")
                     else:
                         allowed, cooldown_secs = check_login_rate_limit(clean_gid)
                         if not allowed:
-                            st.error(f"🦇 Too many wrong attempts! Try again in {cooldown_secs} seconds.")
+                            st.error(f"Too many wrong attempts! Try again in {cooldown_secs} seconds.")
                         else:
                             expected_join = st.secrets.get("JOIN_CODE", "NXEHALLOWEEN2026").strip().lower()
                             if clean_join.lower() != expected_join:
                                 record_login_attempt(clean_gid, False)
-                                st.error("That is not the secret quack! Ask an NXE officer in alliance chat.")
+                                st.error("Incorrect join code! Please ask an NXE officer in alliance chat.")
                             elif not is_governor_in_roster(clean_gid):
                                 record_login_attempt(clean_gid, False)
                                 st.error(f"Governor ID `{clean_gid}` not found in the approved roster! Ask an officer to add you (or switch to Officer Portal if you are an officer).")
@@ -506,7 +509,7 @@ if not user_gid:
         # Guest link if voting or results open
         if current_phase in (CompetitionPhase.VOTING, CompetitionPhase.RESULTS) or phase_info.get("can_vote"):
             st.markdown("")
-            if st.button("👀 Just browsing? View Costume Gallery as Guest ➡️", key="guest_gal_btn"):
+            if st.button("Browse Costume Gallery as Guest →", key="guest_gal_btn"):
                 st.session_state.active_screen = "gallery"
                 st.session_state.user_gid = "guest"
                 st.rerun()
@@ -526,9 +529,9 @@ else:
     # 1. Compact User Bar
     col_u1, col_u2 = st.columns([3, 1])
     with col_u1:
-        st.markdown(f"🧙 Contestant: **Governor `{user_gid}`**")
+        st.markdown(f"Contestant: **Governor `{user_gid}`**")
     with col_u2:
-        if st.button("🚪 Logout", key="user_logout_btn"):
+        if st.button("Logout", key="user_logout_btn"):
             st.session_state.user_gid = None
             st.session_state.active_screen = "login"
             if "session" in st.query_params:
@@ -547,18 +550,18 @@ else:
             st.session_state.active_screen = "gallery"
 
     steps = [
-        ("home", "📜 Prizes"),
-        ("quiz", "🧠 Quiz"),
-        ("submit", "🎨 Costume"),
-        ("gallery", "👻 Gallery"),
-        ("leaderboard", "🏆 Podium")
+        ("home", "Prizes & Rules"),
+        ("quiz", "Lore Quiz"),
+        ("submit", "Costume"),
+        ("gallery", "Gallery"),
+        ("leaderboard", "Podium")
     ]
 
     step_cols = st.columns(5)
     for i, (s_key, s_label) in enumerate(steps):
         with step_cols[i]:
             is_active = (st.session_state.active_screen == s_key)
-            lbl = f"⭐ {s_label}" if is_active else s_label
+            lbl = f"● {s_label}" if is_active else s_label
             if st.button(lbl, key=f"step_btn_{s_key}"):
                 st.session_state.active_screen = s_key
                 st.rerun()
@@ -589,4 +592,4 @@ else:
 # SPOOKY HALLOWEEN FOOTER
 # ==========================================
 st.markdown("---")
-st.markdown('<div style="text-align: center; color: var(--text-secondary); font-size: 0.9rem; padding: 1rem 0;">🎃 <strong>NXE Pond Fam Halloween</strong> • May Your Pumpkins Glow & Your Ducks Quack Forever! 🦆👻🦇</div>', unsafe_allow_html=True)
+st.markdown('<div style="text-align: center; color: var(--text-secondary); font-size: 0.9rem; padding: 1rem 0;">NXE Pond Fam Halloween • King Shot Alliance Championship</div>', unsafe_allow_html=True)

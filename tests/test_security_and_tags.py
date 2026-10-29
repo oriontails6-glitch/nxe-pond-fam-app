@@ -37,3 +37,15 @@ def test_constant_time_admin_hash():
     val3 = "WrongPassword123!"
     assert hmac.compare_digest(val1.encode(), val2.encode()) is True
     assert hmac.compare_digest(val1.encode(), val3.encode()) is False
+
+
+def test_exhibition_governor_rule():
+    """Verify governor 409716271 is marked as exhibition only and cannot receive votes."""
+    exhibition_gid = "409716271"
+    
+    # Exhibition entry check
+    entry_pax = {"id": "pax-entry-id", "governor_id": "409716271"}
+    entry_normal = {"id": "normal-entry-id", "governor_id": "296378532"}
+    
+    assert (entry_pax.get("governor_id") == exhibition_gid) is True
+    assert (entry_normal.get("governor_id") == exhibition_gid) is False

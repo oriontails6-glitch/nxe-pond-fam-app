@@ -24,7 +24,7 @@ from phases import CompetitionPhase
 
 
 def render_gallery(user_gid: str, current_phase: CompetitionPhase, phase_info: dict | None = None):
-    st.markdown("## 👻 Anonymous Costume Gallery 🪷")
+    st.markdown("## Anonymous Costume Gallery")
 
     can_vote = (current_phase == CompetitionPhase.VOTING)
     if phase_info and "can_vote" in phase_info:
@@ -33,23 +33,23 @@ def render_gallery(user_gid: str, current_phase: CompetitionPhase, phase_info: d
     # Gallery is sealed only when submissions are exclusively running and voting hasn't opened
     if current_phase == CompetitionPhase.SUBMISSIONS and not can_vote:
         st.markdown("""<div class="pond-card" style="text-align: center; padding: 2.2rem 1.2rem;">
-<div style="font-size: 2.6rem; margin-bottom: 0.35rem;">🗝️ 🪷 🔒</div>
-<h3 style="color: #FDE047; font-family: 'Fredoka', sans-serif; font-size: 1.5rem; margin: 0.2rem 0 0.6rem 0;">The Misty Pond Vault is Sealed!</h3>
+<div style="font-size: 2rem; margin-bottom: 0.35rem;">🔒</div>
+<h3 style="color: #FDE047; font-family: 'Fredoka', sans-serif; font-size: 1.5rem; margin: 0.2rem 0 0.6rem 0;">The Misty Pond Vault is Sealed</h3>
 <p style="color: #DDD6FE; font-size: 0.94rem; line-height: 1.55; max-width: 460px; margin: 0 auto 1.2rem auto;">
 All contestant costumes are safely resting under the moonlit lily pads to keep every disguise a grand surprise. The gallery unseals when voting opens!
 </p>
 <div style="display: inline-block; background: rgba(251, 191, 36, 0.15); border: 1px solid rgba(251, 191, 36, 0.35); border-radius: 9999px; padding: 6px 16px; font-size: 0.9rem; color: #FDE68A; font-weight: 700;">
-⏳ Submissions are open now • Make sure your costume is sealed!
+Submissions are open now • Make sure your costume is submitted!
 </div>
 </div>""", unsafe_allow_html=True)
 
         col_g1, col_g2 = st.columns(2)
         with col_g1:
-            if st.button("⬅️ Back to Lore Quiz", key="gal_to_quiz_btn"):
+            if st.button("← Back to Lore Quiz", key="gal_to_quiz_btn"):
                 st.session_state.active_screen = "quiz"
                 st.rerun()
         with col_g2:
-            if st.button("🎨 Go to Costume Submission ➡️", key="gal_to_sub_btn"):
+            if st.button("Costume Submission →", key="gal_to_sub_btn"):
                 st.session_state.active_screen = "submit"
                 st.rerun()
         return
@@ -63,7 +63,7 @@ All contestant costumes are safely resting under the moonlit lily pads to keep e
         raw_entries = st.session_state.gallery_order
 
     if not raw_entries:
-        st.info("No costumes are floating in the pond yet. Check back soon!")
+        st.info("No costumes have been submitted yet. Check back soon!")
         return
 
     # User's own entry ID
@@ -77,26 +77,22 @@ All contestant costumes are safely resting under the moonlit lily pads to keep e
 
     # Phase 3 Sticky Votes Chip
     if can_vote:
-        st.markdown(f'<div class="sticky-votes-chip">🗳️ Votes Remaining: {votes_left} / {config.VOTES_PER_VOTER}</div>', unsafe_allow_html=True)
-        st.caption("Tap 'Vote' on 3 different favorites. You can remove a vote and re-spend it anytime before voting ends!")
+        st.markdown(f'<div class="sticky-votes-chip">Votes Remaining: {votes_left} / {config.VOTES_PER_VOTER}</div>', unsafe_allow_html=True)
+        st.caption(f"Showing all {len(raw_entries)} contestants. Select your 3 favorite costumes. You can change your votes anytime before voting ends.")
     elif current_phase == CompetitionPhase.JUDGING:
-        st.markdown('<div class="pond-card pumpkin-accent-card"><strong>👻 Phase 2 Deliberation:</strong> Browse and admire the spooky costumes! Community voting unlocks in Phase 3.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="pond-card pumpkin-accent-card"><strong>Phase 2 Deliberation:</strong> Browse and admire the costumes! Community voting unlocks in Phase 3.</div>', unsafe_allow_html=True)
     elif current_phase == CompetitionPhase.RESULTS:
-        st.info("Voting has concluded! Check the **Leaderboard** for the crowned winner.")
+        st.info("Voting has concluded! Check the Leaderboard for the crowned winner.")
     else:
         st.info("Submissions are currently in progress! Community voting unlocks when the vault opens.")
 
-    # Pagination: 8 entries per page
-    if "gallery_page_size" not in st.session_state:
-        st.session_state.gallery_page_size = 8
-
-    visible_entries = raw_entries[:st.session_state.gallery_page_size]
-
-    for idx, entry in enumerate(visible_entries, start=1):
+    # Render ALL entries without pagination
+    for idx, entry in enumerate(raw_entries, start=1):
         eid = entry["id"]
+        entry_gid = entry.get("governor_id")
         is_own = (eid == user_entry_id)
         is_voted = (eid in user_votes)
-        is_qualified = entry.get("qualified", False)
+        is_exhibition = (entry_gid == "409716271")
 
         with st.container():
             img_url = entry.get("thumb_path") or entry.get("image_path") or ""
@@ -111,61 +107,59 @@ All contestant costumes are safely resting under the moonlit lily pads to keep e
 <img src="{escaped_img}" alt="Halloween Costume" class="gallery-fit-image" loading="lazy" />
 </div>
 <div style="text-align: center;">
-<span class="tap-reveal-pill">👆 Tap photo to read backstory 📖</span>
+<span class="tap-reveal-pill">Tap photo to read backstory</span>
 </div>
 </summary>
 <div class="story-revealed-panel">
-<div class="story-header">📜 Spooky Backstory:</div>
+<div class="story-header">Costume Story:</div>
 <p class="story-body">{escaped_backstory}</p>
 </div>
 </details>"""
             st.markdown(card_html, unsafe_allow_html=True)
 
-            st.markdown('<div style="color: #34D399; font-size: 0.9rem; font-weight: 700; margin: 4px 0 10px 0;">🎃 Official Contestant</div>', unsafe_allow_html=True)
+            if is_exhibition:
+                st.markdown('<div style="color: #FBBF24; font-size: 0.9rem; font-weight: 700; margin: 4px 0 10px 0;">Special Showcase • Exhibition Entry</div>', unsafe_allow_html=True)
+            else:
+                st.markdown('<div style="color: #34D399; font-size: 0.9rem; font-weight: 700; margin: 4px 0 10px 0;">Official Contestant</div>', unsafe_allow_html=True)
 
             # Voting Controls (Active during Voting)
             if can_vote:
-                if is_own:
-                    st.info("🌟 This is your own costume! (Self-voting is forbidden)")
+                if is_exhibition:
+                    st.info("Special Exhibition Showcase: This costume is on display for everyone to admire and is not eligible for community voting.")
+                elif is_own:
+                    st.info("This is your own costume. (Self-voting is not allowed)")
                 elif is_voted:
                     c1, c2 = st.columns([2, 1])
                     with c1:
-                        st.success("✅ Voted for this costume!")
+                        st.success("Voted for this costume")
                     with c2:
-                        if st.button("❌ Remove Vote", key=f"unvote_{eid}"):
+                        if st.button("Remove Vote", key=f"unvote_{eid}"):
                             res = remove_vote(user_gid, eid)
                             if res.get("success"):
                                 st.rerun()
                             else:
                                 st.error(res.get("message", "Error removing vote."))
                 elif votes_left > 0:
-                    if st.button(f"🗳️ Vote for Costume #{idx}", key=f"vote_{eid}"):
+                    if st.button(f"Vote for Costume #{idx}", key=f"vote_{eid}"):
                         res = cast_vote(user_gid, eid)
                         if res.get("success"):
-                            st.balloons()
                             st.rerun()
                         else:
                             st.error(res.get("message", "Error casting vote."))
                 else:
-                    st.caption("🔒 All 3 votes used! (Remove a vote above to switch)")
+                    st.caption("All 3 votes used. Remove a vote above to reassign.")
 
             st.markdown("</div>", unsafe_allow_html=True)
             st.markdown("")
-
-    # Load More Button
-    if st.session_state.gallery_page_size < len(raw_entries):
-        if st.button("🔽 Load 8 More Costumes", key="load_more_btn"):
-            st.session_state.gallery_page_size += 8
-            st.rerun()
 
     # Navigation Bar
     st.markdown("---")
     col_nav1, col_nav2 = st.columns(2)
     with col_nav1:
-        if st.button("⬅️ Back to Costume", key="gal_back_sub_btn"):
+        if st.button("← Back to Costume", key="gal_back_sub_btn"):
             st.session_state.active_screen = "submit"
             st.rerun()
     with col_nav2:
-        if st.button("🏆 View Podium ➡️", key="gal_to_leaderboard_btn"):
+        if st.button("View Podium →", key="gal_to_leaderboard_btn"):
             st.session_state.active_screen = "leaderboard"
             st.rerun()
