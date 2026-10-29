@@ -26,7 +26,7 @@ def sanitize_text(text: str) -> str:
     return clean.strip()
 
 
-def render_submit(user_gid: str, current_phase: CompetitionPhase):
+def render_submit(user_gid: str, current_phase: CompetitionPhase, phase_info: dict | None = None):
     st.markdown("## 🎨 Costume & Avatar Submission Portal 🎃")
 
     # Check existing entry
@@ -38,9 +38,15 @@ def render_submit(user_gid: str, current_phase: CompetitionPhase):
     best_score = max([a["score"] for a in attempts], default=0) if attempts else 0
     is_qualified = True
 
-    # Phase check: submissions allowed only in Phase 1
-    if current_phase != CompetitionPhase.SUBMISSIONS:
-        st.warning(f"🔒 Costume submissions are currently sleeping. Current stage: **{current_phase.label}**.")
+    # Phase check: submissions allowed when can_submit is True (or Phase 1)
+    can_submit = True
+    if phase_info and "can_submit" in phase_info:
+        can_submit = phase_info["can_submit"]
+    elif current_phase != CompetitionPhase.SUBMISSIONS:
+        can_submit = False
+
+    if not can_submit:
+        st.warning(f"🔒 Costume submissions are currently closed (Deadline: 29 Oct 19:00 UTC). Current stage: **{current_phase.label}**.")
         if existing_entry:
             st.info("Your costume is safely locked inside the mist-shrouded pond vault:")
             if existing_entry.get("thumb_path"):
@@ -92,7 +98,7 @@ def render_submit(user_gid: str, current_phase: CompetitionPhase):
             st.image(existing_entry["thumb_path"], width=180)
 
         backstory_input = st.text_area(
-            "Character Backstory (max 500 chars)",
+            f"Character Backstory (max {config.BACKSTORY_MAX_CHARS} chars)",
             value=default_backstory,
             max_chars=config.BACKSTORY_MAX_CHARS,
             height=130,

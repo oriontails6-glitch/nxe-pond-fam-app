@@ -114,6 +114,9 @@ def evaluate_phase(settings: dict, test_mode: bool = False, current_time_utc: da
 
             rem = (t_time - current_time_utc) if (t_time and t_time > current_time_utc) else None
 
+            can_sub = (forced_phase == CompetitionPhase.SUBMISSIONS)
+            can_vot = (forced_phase == CompetitionPhase.VOTING)
+
             return forced_phase, {
                 "phase": forced_phase,
                 "current_time_utc": current_time_utc,
@@ -125,28 +128,53 @@ def evaluate_phase(settings: dict, test_mode: bool = False, current_time_utc: da
                 "submission_deadline": sub_d,
                 "voting_start": vot_s,
                 "voting_end": vot_e,
+                "can_submit": can_sub,
+                "can_vote": can_vot,
             }
 
-    sub_deadline = parse_iso_utc(settings.get("submission_deadline_utc", "2026-10-29T14:00:00Z"))
-    voting_start = parse_iso_utc(settings.get("voting_start_utc", "2026-10-30T14:00:00Z"))
+    sub_deadline = parse_iso_utc(settings.get("submission_deadline_utc", "2026-10-29T19:00:00Z"))
+    voting_start = parse_iso_utc(settings.get("voting_start_utc", "2026-10-29T15:00:00Z"))
     voting_end = parse_iso_utc(settings.get("voting_end_utc", "2026-10-31T14:00:00Z"))
 
-    if sub_deadline and current_time_utc < sub_deadline:
-        phase = CompetitionPhase.SUBMISSIONS
-        target_time = sub_deadline
-        target_label = "Submissions Close"
-    elif voting_start and current_time_utc < voting_start:
-        phase = CompetitionPhase.JUDGING
-        target_time = voting_start
-        target_label = "Voting Opens"
-    elif voting_end and current_time_utc < voting_end:
-        phase = CompetitionPhase.VOTING
-        target_time = voting_end
-        target_label = "Voting Closes"
+    can_submit = bool(sub_deadline and current_time_utc < sub_deadline)
+    can_vote = bool(voting_start and voting_end and voting_start <= current_time_utc < voting_end)
+
+    if voting_start and sub_deadline and voting_start <= sub_deadline:
+        # Overlapping schedule: voting starts while submissions are still open
+        if current_time_utc < voting_start:
+            phase = CompetitionPhase.SUBMISSIONS
+            target_time = voting_start
+            target_label = "Voting Opens"
+        elif current_time_utc < sub_deadline:
+            phase = CompetitionPhase.VOTING
+            target_time = sub_deadline
+            target_label = "Submissions Close"
+        elif voting_end and current_time_utc < voting_end:
+            phase = CompetitionPhase.VOTING
+            target_time = voting_end
+            target_label = "Voting Closes"
+        else:
+            phase = CompetitionPhase.RESULTS
+            target_time = None
+            target_label = "Competition Concluded"
     else:
-        phase = CompetitionPhase.RESULTS
-        target_time = None
-        target_label = "Competition Concluded"
+        # Sequential schedule: Submissions -> Judging -> Voting -> Results
+        if sub_deadline and current_time_utc < sub_deadline:
+            phase = CompetitionPhase.SUBMISSIONS
+            target_time = sub_deadline
+            target_label = "Submissions Close"
+        elif voting_start and current_time_utc < voting_start:
+            phase = CompetitionPhase.JUDGING
+            target_time = voting_start
+            target_label = "Voting Opens"
+        elif voting_end and current_time_utc < voting_end:
+            phase = CompetitionPhase.VOTING
+            target_time = voting_end
+            target_label = "Voting Closes"
+        else:
+            phase = CompetitionPhase.RESULTS
+            target_time = None
+            target_label = "Competition Concluded"
 
     remaining = (target_time - current_time_utc) if target_time else None
 
@@ -160,5 +188,7 @@ def evaluate_phase(settings: dict, test_mode: bool = False, current_time_utc: da
         "target_time": target_time,
         "target_label": target_label,
         "countdown_str": format_countdown(remaining) if remaining else "00:00:00",
-        "is_override": False
+        "is_override": False,
+        "can_submit": can_submit,
+        "can_vote": can_vote,
     }

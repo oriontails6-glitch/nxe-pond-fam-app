@@ -24,14 +24,20 @@ from db import (
 from phases import CompetitionPhase
 
 
-def render_quiz(user_gid: str, current_phase: CompetitionPhase):
+def render_quiz(user_gid: str, current_phase: CompetitionPhase, phase_info: dict | None = None):
     st.markdown("## 🧠 The Spooky Fantasy Lore Initiation 🎃")
     st.markdown("""
     *Answer 5 fun questions from the whimsical pond archives! Trivia scores are purely for bragging rights — all contestants stand on 100% equal ground to win!*
     """)
 
-    # Phase check: Trivia allowed ONLY in Phase 1
-    if current_phase != CompetitionPhase.SUBMISSIONS:
+    # Phase check: Trivia allowed when submissions are open
+    can_submit = True
+    if phase_info and "can_submit" in phase_info:
+        can_submit = phase_info["can_submit"]
+    elif current_phase != CompetitionPhase.SUBMISSIONS:
+        can_submit = False
+
+    if not can_submit:
         st.warning(f"🔒 The Trivia Gate is sleeping during **{current_phase.label}**. No new quiz attempts can be made.")
         attempts = get_quiz_attempts(user_gid)
         if attempts:

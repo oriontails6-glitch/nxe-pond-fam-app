@@ -23,16 +23,20 @@ from db import (
 from phases import CompetitionPhase
 
 
-def render_gallery(user_gid: str, current_phase: CompetitionPhase):
+def render_gallery(user_gid: str, current_phase: CompetitionPhase, phase_info: dict | None = None):
     st.markdown("## 👻 Anonymous Costume Gallery 🪷")
 
-    # Phase 1: Gallery is sealed until Phase 2
-    if current_phase == CompetitionPhase.SUBMISSIONS:
+    can_vote = (current_phase == CompetitionPhase.VOTING)
+    if phase_info and "can_vote" in phase_info:
+        can_vote = phase_info["can_vote"]
+
+    # Gallery is sealed only when submissions are exclusively running and voting hasn't opened
+    if current_phase == CompetitionPhase.SUBMISSIONS and not can_vote:
         st.markdown("""<div class="pond-card" style="text-align: center; padding: 2.2rem 1.2rem;">
 <div style="font-size: 2.6rem; margin-bottom: 0.35rem;">🗝️ 🪷 🔒</div>
 <h3 style="color: #FDE047; font-family: 'Fredoka', sans-serif; font-size: 1.5rem; margin: 0.2rem 0 0.6rem 0;">The Misty Pond Vault is Sealed!</h3>
 <p style="color: #DDD6FE; font-size: 0.94rem; line-height: 1.55; max-width: 460px; margin: 0 auto 1.2rem auto;">
-All contestant costumes are safely resting under the moonlit lily pads to keep every disguise a grand surprise. The gallery unseals when deliberations begin!
+All contestant costumes are safely resting under the moonlit lily pads to keep every disguise a grand surprise. The gallery unseals when voting opens!
 </p>
 <div style="display: inline-block; background: rgba(251, 191, 36, 0.15); border: 1px solid rgba(251, 191, 36, 0.35); border-radius: 9999px; padding: 6px 16px; font-size: 0.9rem; color: #FDE68A; font-weight: 700;">
 ⏳ Submissions are open now • Make sure your costume is sealed!
@@ -72,13 +76,15 @@ All contestant costumes are safely resting under the moonlit lily pads to keep e
     votes_left = max(0, config.VOTES_PER_VOTER - votes_used)
 
     # Phase 3 Sticky Votes Chip
-    if current_phase == CompetitionPhase.VOTING:
+    if can_vote:
         st.markdown(f'<div class="sticky-votes-chip">🗳️ Votes Remaining: {votes_left} / {config.VOTES_PER_VOTER}</div>', unsafe_allow_html=True)
         st.caption("Tap 'Vote' on 3 different favorites. You can remove a vote and re-spend it anytime before voting ends!")
     elif current_phase == CompetitionPhase.JUDGING:
         st.markdown('<div class="pond-card pumpkin-accent-card"><strong>👻 Phase 2 Deliberation:</strong> Browse and admire the spooky costumes! Community voting unlocks in Phase 3.</div>', unsafe_allow_html=True)
-    else:
+    elif current_phase == CompetitionPhase.RESULTS:
         st.info("Voting has concluded! Check the **Leaderboard** for the crowned winner.")
+    else:
+        st.info("Submissions are currently in progress! Community voting unlocks when the vault opens.")
 
     # Pagination: 8 entries per page
     if "gallery_page_size" not in st.session_state:
@@ -117,8 +123,8 @@ All contestant costumes are safely resting under the moonlit lily pads to keep e
 
             st.markdown('<div style="color: #34D399; font-size: 0.9rem; font-weight: 700; margin: 4px 0 10px 0;">🎃 Official Contestant</div>', unsafe_allow_html=True)
 
-            # Voting Controls (Active in Phase 3)
-            if current_phase == CompetitionPhase.VOTING:
+            # Voting Controls (Active during Voting)
+            if can_vote:
                 if is_own:
                     st.info("🌟 This is your own costume! (Self-voting is forbidden)")
                 elif is_voted:

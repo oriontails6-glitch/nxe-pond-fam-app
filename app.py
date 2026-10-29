@@ -504,7 +504,7 @@ if not user_gid:
                                 st.rerun()
 
         # Guest link if voting or results open
-        if current_phase in (CompetitionPhase.VOTING, CompetitionPhase.RESULTS):
+        if current_phase in (CompetitionPhase.VOTING, CompetitionPhase.RESULTS) or phase_info.get("can_vote"):
             st.markdown("")
             if st.button("👀 Just browsing? View Costume Gallery as Guest ➡️", key="guest_gal_btn"):
                 st.session_state.active_screen = "gallery"
@@ -571,15 +571,15 @@ else:
     if curr == "home":
         render_home_showcase_carousel()
     elif curr == "quiz":
-        render_quiz(user_gid, current_phase)
+        render_quiz(user_gid, current_phase, phase_info)
     elif curr == "submit":
-        render_submit(user_gid, current_phase)
+        render_submit(user_gid, current_phase, phase_info)
     elif curr == "gallery":
-        render_gallery(user_gid, current_phase)
+        render_gallery(user_gid, current_phase, phase_info)
     elif curr == "leaderboard":
         render_leaderboard(current_phase, phase_info.get("voting_end"))
     else:
-        render_quiz(user_gid, current_phase)
+        render_quiz(user_gid, current_phase, phase_info)
 
     # 4. Spooky Dad Joke at bottom
     render_dad_joke_card()
