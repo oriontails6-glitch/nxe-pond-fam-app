@@ -46,7 +46,7 @@ def render_submit(user_gid: str, current_phase: CompetitionPhase, phase_info: di
         can_submit = False
 
     if not can_submit:
-        st.warning(f"Costume submissions closed at 19:00 UTC on 29 Oct. Current stage: **{current_phase.label}**.")
+        st.warning(f"Costume submissions are closed. Current stage: **{current_phase.label}**.")
         if existing_entry:
             st.info("Your costume is safely submitted in the pond vault:")
             if existing_entry.get("thumb_path"):
@@ -60,7 +60,12 @@ def render_submit(user_gid: str, current_phase: CompetitionPhase, phase_info: di
                 <p style="color: #F8FAFC; margin-bottom: 0.8rem;">Ready to inspect everyone's costumes in the gallery?</p>
             </div>
             """, unsafe_allow_html=True)
-            if st.button("Explore Costume Gallery →", key="sub_locked_to_gal"):
+            if st.button("Explore Costume Gallery & Vote →", key="sub_locked_to_gal"):
+                st.session_state.active_screen = "gallery"
+                st.rerun()
+        else:
+            st.info("You did not submit a costume, but you can still vote for your 3 favorites in the Costume Gallery!")
+            if st.button("Go to Costume Gallery & Vote →", key="sub_nosub_to_gal"):
                 st.session_state.active_screen = "gallery"
                 st.rerun()
         return

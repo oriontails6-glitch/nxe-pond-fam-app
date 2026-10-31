@@ -52,11 +52,11 @@ def test_test_mode_phase_override():
 
 
 def test_overlapping_schedule():
-    """Tests overlapping schedule: voting starts at 15:00 UTC, submissions close at 19:00 UTC."""
+    """Tests overlapping schedule: voting starts at 15:00 UTC, submissions close at 19:00 UTC, voting closes at 19:00 UTC 31 Oct."""
     settings = {
         "submission_deadline_utc": "2026-10-29T19:00:00Z",
         "voting_start_utc": "2026-10-29T15:00:00Z",
-        "voting_end_utc": "2026-10-31T14:00:00Z",
+        "voting_end_utc": "2026-10-31T19:00:00Z",
         "phase_override": ""
     }
 

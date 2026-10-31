@@ -63,9 +63,9 @@ def get_settings() -> dict:
         return {r["key"]: r["value"] for r in (res.data or [])}
     except Exception as e:
         return {
-            "submission_deadline_utc": "2026-10-29T14:00:00Z",
-            "voting_start_utc": "2026-10-30T14:00:00Z",
-            "voting_end_utc": "2026-10-31T14:00:00Z",
+            "submission_deadline_utc": "2026-10-30T19:00:00Z",
+            "voting_start_utc": "2026-10-29T15:00:00Z",
+            "voting_end_utc": "2026-10-31T19:00:00Z",
             "phase_override": ""
         }
 

@@ -95,9 +95,9 @@ def evaluate_phase(settings: dict, test_mode: bool = False, current_time_utc: da
         }
         if override_val in override_map:
             forced_phase = override_map[override_val]
-            sub_d = parse_iso_utc(settings.get("submission_deadline_utc", "2026-10-29T14:00:00Z"))
-            vot_s = parse_iso_utc(settings.get("voting_start_utc", "2026-10-30T14:00:00Z"))
-            vot_e = parse_iso_utc(settings.get("voting_end_utc", "2026-10-31T14:00:00Z"))
+            sub_d = parse_iso_utc(settings.get("submission_deadline_utc", "2026-10-30T19:00:00Z"))
+            vot_s = parse_iso_utc(settings.get("voting_start_utc", "2026-10-29T15:00:00Z"))
+            vot_e = parse_iso_utc(settings.get("voting_end_utc", "2026-10-31T19:00:00Z"))
 
             if forced_phase == CompetitionPhase.SUBMISSIONS:
                 t_time = sub_d
@@ -132,9 +132,9 @@ def evaluate_phase(settings: dict, test_mode: bool = False, current_time_utc: da
                 "can_vote": can_vot,
             }
 
-    sub_deadline = parse_iso_utc(settings.get("submission_deadline_utc", "2026-10-29T19:00:00Z"))
+    sub_deadline = parse_iso_utc(settings.get("submission_deadline_utc", "2026-10-30T19:00:00Z"))
     voting_start = parse_iso_utc(settings.get("voting_start_utc", "2026-10-29T15:00:00Z"))
-    voting_end = parse_iso_utc(settings.get("voting_end_utc", "2026-10-31T14:00:00Z"))
+    voting_end = parse_iso_utc(settings.get("voting_end_utc", "2026-10-31T19:00:00Z"))
 
     can_submit = bool(sub_deadline and current_time_utc < sub_deadline)
     can_vote = bool(voting_start and voting_end and voting_start <= current_time_utc < voting_end)

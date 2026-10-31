@@ -494,10 +494,12 @@ if not user_gid:
                                 token = generate_session_token(clean_gid)
                                 st.query_params["session"] = token
 
-                                # Route to exact required step
+                                # Route directly to gallery if voting is active, or to first incomplete step
                                 attempts = get_quiz_attempts(clean_gid)
                                 entry = get_entry_by_governor(clean_gid)
-                                if not attempts:
+                                if phase_info.get("can_vote"):
+                                    st.session_state.active_screen = "gallery"
+                                elif not attempts:
                                     st.session_state.active_screen = "quiz"
                                 elif not entry:
                                     st.session_state.active_screen = "submit"
@@ -540,14 +542,17 @@ else:
 
     # 2. Clean 5-Step Minimal Navigation Stepper
     if st.session_state.active_screen in ("login",):
-        attempts = get_quiz_attempts(user_gid)
-        entry = get_entry_by_governor(user_gid)
-        if not attempts:
-            st.session_state.active_screen = "quiz"
-        elif not entry:
-            st.session_state.active_screen = "submit"
-        else:
+        if phase_info.get("can_vote"):
             st.session_state.active_screen = "gallery"
+        else:
+            attempts = get_quiz_attempts(user_gid)
+            entry = get_entry_by_governor(user_gid)
+            if not attempts:
+                st.session_state.active_screen = "quiz"
+            elif not entry:
+                st.session_state.active_screen = "submit"
+            else:
+                st.session_state.active_screen = "gallery"
 
     steps = [
         ("home", "Prizes & Rules"),

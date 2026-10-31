@@ -45,9 +45,15 @@ def render_quiz(user_gid: str, current_phase: CompetitionPhase, phase_info: dict
             st.info(f"Your final recorded trivia score is **{best}/5** (Official Contestant on Equal Ground).")
         
         # Guide button to next step
-        if st.button("Costume Submission →", key="quiz_closed_next_btn"):
-            st.session_state.active_screen = "submit"
-            st.rerun()
+        c_q1, c_q2 = st.columns(2)
+        with c_q1:
+            if st.button("Vote in Costume Gallery →", key="quiz_closed_vote_btn"):
+                st.session_state.active_screen = "gallery"
+                st.rerun()
+        with c_q2:
+            if st.button("Costume Submission →", key="quiz_closed_next_btn"):
+                st.session_state.active_screen = "submit"
+                st.rerun()
         return
 
     # Check previous attempts
